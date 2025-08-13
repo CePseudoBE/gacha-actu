@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GachaActu 🎮
 
-## Getting Started
+> **"Par un fan, pour les fans"**
 
-First, run the development server:
+La source numéro une de l'actualité des jeux mobile et multi-plateformes Gacha. Suivez les dernières bannières, guides exclusifs et événements de vos jeux favoris comme Bleach Soul Resonance, Seven Deadly Sins Origins et bien d'autres !
 
+## ✨ Fonctionnalités
+
+- 📰 **Actualités** - Dernières bannières, mises à jour et événements
+- 📖 **Guides** - Analyses d'experts et stratégies 
+- 🏆 **Tier Lists** - Classements méta des personnages
+- 📅 **Événements** - Calendrier et suivi des events
+- 💬 **Communauté** - Discussions Discord intégrées
+
+## 🎯 Jeux couverts
+
+### Principaux
+- **Bleach Soul Resonance** (BSR)
+- **Seven Deadly Sins Origins** (7DS)
+
+## 🛠 Stack technique
+
+- **Framework** : Next.js 15.4.6 (App Router)
+- **UI Library** : shadcn/ui + Tailwind CSS
+- **Typography** : Source Sans 3
+- **Icons** : Lucide React
+- **Deployment** : Vercel Ready
+
+## 🚀 Démarrage rapide
+
+1. **Installation des dépendances**
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Lancer le serveur de développement**
+```bash
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Ouvrir dans le navigateur**
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📁 Structure du projet
 
-## Learn More
+```
+src/
+├── app/
+│   ├── layout.tsx        # Layout global + Header
+│   ├── page.tsx          # Page d'accueil
+│   └── globals.css       # Styles globaux
+├── components/
+│   ├── Header.tsx        # Navigation principale
+│   ├── ArticleCard.tsx   # Card article réutilisable
+│   └── home/
+│       └── HeroSection.tsx # Hero de l'accueil
+└── lib/
+    └── utils.ts          # Utilitaires Tailwind
 
-To learn more about Next.js, take a look at the following resources:
+public/
+├── icons/
+│   └── discord.svg       # Icône Discord custom
+└── img/
+    ├── 7ds.jpg          # Seven Deadly Sins
+    └── bsr.jpg          # Bleach Soul Resonance
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 Design System
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Couleurs
+- **Hero** : Gradient noir vers vert très foncé (`#051202`)
+- **Texte** : Grises (`gray-500`, `gray-600`) 
+- **Accent** : Vert émeraude pour les highlights
 
-## Deploy on Vercel
+### Components
+- **Navigation** : shadcn NavigationMenu avec dropdown "Jeux"
+- **Cards** : Design moderne avec images optimisées
+- **Boutons** : Style outline cohérent
+- **Responsive** : Mobile-first design
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 Pages disponibles
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- ✅ **Accueil** (`/`) - Hero + Liste d'actualités
+- 🚧 **Articles** (`/article/[slug]`) - Pages individuelles  
+- 🚧 **Jeux** (`/jeux`) - Liste des jeux couverts
+- 🚧 **Événements** (`/evenements`) - Calendrier events
+- 🚧 **Tier Lists** (`/tier-lists`) - Classements
+
+## 🤝 Contribution
+
+Ce projet suit les bonnes pratiques :
+- Components shadcn/ui privilégiés
+- Next.js Image pour l'optimisation
+- TypeScript pour le typage
+- Responsive design mobile-first
+- Accessibilité (alt text, aria-labels)
+
+## 📝 Scripts disponibles
+
+```bash
+npm run dev      # Serveur de développement
+npm run build    # Build de production  
+npm run start    # Serveur de production
+npm run lint     # Linting ESLint
+```
+
+## 🌐 Déploiement
+
+Le projet est optimisé pour Vercel avec :
+- Configuration Next.js 15
+- Images externes autorisées (Unsplash)
+- Polices Google Fonts intégrées
+- Build automatique sur push
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ton-username/gacha-actu)
+
+## 📄 Documentation
+
+- 🔧 **[next.config.ts](./next.config.ts)** - Configuration Next.js
+- 🎨 **[components.json](./components.json)** - Configuration shadcn/ui

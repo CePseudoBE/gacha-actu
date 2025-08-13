@@ -1,103 +1,85 @@
-import Image from "next/image";
+import { ArticleCard } from "@/components/ArticleCard"
+import { HeroSection } from "@/components/home/HeroSection"
+
+const mockArticles = [
+  {
+    title: "Nouvelle bannière Raiden Shogun dans Genshin Impact 5.3",
+    summary: "La bannière de re-run de Raiden Shogun arrive avec de nouveaux personnages 4 étoiles. Découvrez les détails et les conseils pour optimiser vos tirages.",
+    author: "Alex Gacha",
+    publishedAt: "13 août 2025",
+    game: "Genshin Impact",
+    slug: "raiden-shogun-banniere-5-3",
+    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop"
+  },
+  {
+    title: "Honkai Star Rail : Guide complet de Firefly",
+    summary: "Tout ce qu'il faut savoir sur Firefly, le nouveau personnage DPS Feu. Build, équipes recommandées et stratégies de combat.",
+    author: "Marie HSR",
+    publishedAt: "12 août 2025", 
+    game: "Honkai Star Rail",
+    slug: "guide-firefly-honkai-star-rail",
+    imageUrl: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=400&h=200&fit=crop"
+  },
+  {
+    title: "Fire Emblem Heroes : Événement Fallen Heroes",
+    summary: "Un nouvel événement avec des héros corrompus fait son apparition. Découvrez les nouveaux personnages et les récompenses à obtenir.",
+    author: "Thomas FEH",
+    publishedAt: "11 août 2025",
+    game: "Fire Emblem Heroes", 
+    slug: "evenement-fallen-heroes-feh",
+    imageUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=200&fit=crop"
+  },
+  {
+    title: "Arknights : Tier List des Opérateurs après la mise à jour 15.0",
+    summary: "Notre tier list mise à jour avec les derniers opérateurs et les changements d'équilibrage. Qui sont les meilleurs picks actuellement ?",
+    author: "Sophie AK",
+    publishedAt: "10 août 2025",
+    game: "Arknights",
+    slug: "tier-list-operateurs-arknights-15-0",
+    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=200&fit=crop"
+  },
+  {
+    title: "Blue Archive : Nouveau raid contre Binah",
+    summary: "Un raid de difficulté extrême fait son apparition. Découvrez les meilleures équipes et stratégies pour vaincre ce boss redoutable.",
+    author: "Kevin BA",
+    publishedAt: "9 août 2025",
+    game: "Blue Archive",
+    slug: "raid-binah-blue-archive",
+    imageUrl: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=200&fit=crop"
+  },
+  {
+    title: "Epic Seven : Guide du nouveau héros Belian ML",
+    summary: "La version Moonlight de Belian arrive bientôt ! Analyse de ses compétences, builds recommandés et impact sur la méta PvP.",
+    author: "Lucas E7",
+    publishedAt: "8 août 2025",
+    game: "Epic Seven",
+    slug: "guide-belian-ml-epic-seven",
+    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=200&fit=crop"
+  }
+]
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <HeroSection />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* News Section */}
+      <section className="py-16 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Dernières actualités</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Restez informé des dernières nouveautés, mises à jour et événements de l'univers Gacha
+            </p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {mockArticles.map((article, index) => (
+              <ArticleCard key={index} {...article} />
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      </section>
+    </>
+  )
 }
