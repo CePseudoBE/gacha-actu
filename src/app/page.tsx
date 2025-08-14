@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/home/HeroSection"
 import { ArticlesCarousel } from "@/components/home/ArticlesCarousel"
 import { Metadata } from "next"
+import { getPopularArticles } from "@/lib/data-access"
 
 export const metadata: Metadata = {
   title: "Accueil - Actualités et guides des jeux Gacha",
@@ -12,64 +13,10 @@ export const metadata: Metadata = {
   },
 }
 
-const mockArticles = [
-  {
-    title: "Nouvelle bannière Raiden Shogun dans Genshin Impact 5.3",
-    summary: "La bannière de re-run de Raiden Shogun arrive avec de nouveaux personnages 4 étoiles. Découvrez les détails et les conseils pour optimiser vos tirages.",
-    author: "Alex Gacha",
-    publishedAt: "13 août 2025",
-    game: "Genshin Impact",
-    slug: "raiden-shogun-banniere-5-3",
-    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=400"
-  },
-  {
-    title: "Honkai Star Rail : Guide complet de Firefly",
-    summary: "Tout ce qu'il faut savoir sur Firefly, le nouveau personnage DPS Feu. Build, équipes recommandées et stratégies de combat.",
-    author: "Marie HSR",
-    publishedAt: "12 août 2025", 
-    game: "Honkai Star Rail",
-    slug: "guide-firefly-honkai-star-rail",
-    imageUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=800&h=400"
-  },
-  {
-    title: "Fire Emblem Heroes : Événement Fallen Heroes",
-    summary: "Un nouvel événement avec des héros corrompus fait son apparition. Découvrez les nouveaux personnages et les récompenses à obtenir.",
-    author: "Thomas FEH",
-    publishedAt: "11 août 2025",
-    game: "Fire Emblem Heroes", 
-    slug: "evenement-fallen-heroes-feh",
-    imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&h=400"
-  },
-  {
-    title: "Arknights : Tier List des Opérateurs après la mise à jour 15.0",
-    summary: "Notre tier list mise à jour avec les derniers opérateurs et les changements d'équilibrage. Qui sont les meilleurs picks actuellement ?",
-    author: "Sophie AK",
-    publishedAt: "10 août 2025",
-    game: "Arknights",
-    slug: "tier-list-operateurs-arknights-15-0",
-    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=400"
-  },
-  {
-    title: "Blue Archive : Nouveau raid contre Binah",
-    summary: "Un raid de difficulté extrême fait son apparition. Découvrez les meilleures équipes et stratégies pour vaincre ce boss redoutable.",
-    author: "Kevin BA",
-    publishedAt: "9 août 2025",
-    game: "Blue Archive",
-    slug: "raid-binah-blue-archive",
-    imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=400"
-  },
-  {
-    title: "Epic Seven : Guide du nouveau héros Belian ML",
-    summary: "La version Moonlight de Belian arrive bientôt ! Analyse de ses compétences, builds recommandés et impact sur la méta PvP.",
-    author: "Lucas E7",
-    publishedAt: "8 août 2025",
-    game: "Epic Seven",
-    slug: "guide-belian-ml-epic-seven",
-    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=400"
-  }
-]
+export default async function Home() {
+  // Récupération des articles populaires avec cache optimisé
+  const popularArticles = await getPopularArticles(6)
 
-export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -102,7 +49,7 @@ export default function Home() {
 
       {/* Articles Carousel */}
       <ArticlesCarousel 
-        articles={mockArticles} 
+        articles={popularArticles} 
         title="Dernières actualités"
         subtitle="Restez informé des dernières nouveautés, mises à jour et événements de l'univers Gacha"
       />

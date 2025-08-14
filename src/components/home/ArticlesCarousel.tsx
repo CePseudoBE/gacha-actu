@@ -6,16 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { ArticleCard } from "@/components/ArticleCard"
-
-interface Article {
-  title: string
-  summary: string
-  author: string
-  publishedAt: string
-  game: string
-  slug: string
-  imageUrl?: string
-}
+import { Article } from "@/types/article"
 
 interface ArticlesCarouselProps {
   articles: Article[]
