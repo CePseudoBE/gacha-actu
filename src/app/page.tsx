@@ -1,4 +1,3 @@
-import { ArticleCard } from "@/components/ArticleCard"
 import { HeroSection } from "@/components/home/HeroSection"
 import { ArticlesCarousel } from "@/components/home/ArticlesCarousel"
 import { Metadata } from "next"

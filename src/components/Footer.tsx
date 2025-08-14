@@ -16,7 +16,7 @@ export function Footer() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Par un fan, pour les fans. Votre source d'actualités et de guides pour l'univers des jeux Gacha.
+              Par un fan, pour les fans. Votre source d&apos;actualités et de guides pour l&apos;univers des jeux Gacha.
             </p>
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <span>Fait avec</span>
