@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 
 export function HeroSection() {
   return (
@@ -47,6 +48,63 @@ export function HeroSection() {
               <button className="px-6 py-3 border-2 border-accent text-accent font-bold rounded-lg hover:border-accent/80 hover:text-accent/80 transition-colors duration-300">
                 À venir
               </button>
+            </div>
+
+            {/* Partenaires */}
+            <div className="mt-6">
+              {/* Mobile - Icônes côte à côte */}
+              <div className="lg:hidden flex gap-4 items-center">
+                <Image
+                  src="/icons/ldplayer.svg"
+                  alt="LDPlayer - Émulateur Android pour PC"
+                  width={48}
+                  height={48}
+                  className="opacity-70 hover:opacity-100 transition-opacity duration-300"
+                />
+                <Link 
+                  href="https://fr.gamesplanet.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block opacity-70 hover:opacity-100 transition-opacity duration-300"
+                >
+                  <Image
+                    src="/icons/gamesplanetsmall.png"
+                    alt="Gamesplanet - Boutique de jeux PC"
+                    width={48}
+                    height={48}
+                  />
+                </Link>
+              </div>
+              
+              {/* Desktop - Logos côte à côte */}
+              <div className="hidden lg:flex gap-6 items-center">
+                <Link 
+                  href="https://fr.ldplayer.net/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block hover:scale-105 transition-transform duration-300"
+                >
+                  <Image
+                    src="https://res.ldrescdn.com/ldplayer-official/static/image/home/btn/down-fr.svg?url"
+                    alt="Télécharger LDPlayer - Émulateur Android pour PC"
+                    width={200}
+                    height={60}
+                  />
+                </Link>
+                <Link 
+                  href="https://fr.gamesplanet.com/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block hover:scale-105 transition-transform duration-300"
+                >
+                  <Image
+                    src="/icons/gamsplanetbig.svg"
+                    alt="Gamesplanet - Boutique de jeux PC"
+                    width={200}
+                    height={32}
+                  />
+                </Link>
+              </div>
             </div>
           </div>
 
