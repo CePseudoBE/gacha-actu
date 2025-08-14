@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Filter, Calendar, TrendingUp, RotateCcw } from "lucide-react"
+import { Search, Filter, Calendar, RotateCcw } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -157,7 +157,7 @@ export function ArticlesFilter({ articles, games }: ArticlesFilterProps) {
                 <span> • Filtré par {selectedGame}</span>
               )}
               {searchQuery.trim() && (
-                <span> • Recherche: "{searchQuery}"</span>
+                <span> • Recherche: &quot;{searchQuery}&quot;</span>
               )}
             </p>
           </div>
@@ -192,7 +192,7 @@ export function ArticlesFilter({ articles, games }: ArticlesFilterProps) {
                 <Search className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-2">Aucun résultat trouvé</h3>
                 <p className="text-muted-foreground mb-4">
-                  Essayez de modifier vos critères de recherche ou explorez d'autres catégories.
+                  Essayez de modifier vos critères de recherche ou explorez d&apos;autres catégories.
                 </p>
                 <Button variant="outline" onClick={handleReset}>
                   <RotateCcw className="h-4 w-4 mr-2" />
