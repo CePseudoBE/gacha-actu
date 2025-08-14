@@ -2,8 +2,31 @@ import Image from "next/image"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[80vh] bg-gradient-to-br from-black to-[#051202]">
-      <div className="container mx-auto px-4 h-full">
+    <section className="relative min-h-[80vh] bg-gradient-to-br from-black to-[#051202] overflow-hidden">
+      {/* Background images for mobile - subtle overlay */}
+      <div className="absolute inset-0 lg:hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 z-10" />
+        <div className="flex h-full">
+          <div className="flex-1 relative">
+            <Image
+              src="/img/7ds.jpg"
+              alt="Seven Deadly Sins"
+              fill
+              className="object-cover object-center opacity-30"
+            />
+          </div>
+          <div className="flex-1 relative">
+            <Image
+              src="/img/bsr.jpg"
+              alt="Bleach Soul Resonance"
+              fill
+              className="object-cover object-center opacity-30"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 h-full relative z-20">
         <div className="flex items-center justify-between h-full min-h-[80vh] gap-12">
           {/* Left side - Title and text */}
           <div className="flex-1 text-gray-500 font-[family-name:var(--font-source-sans-3)]">
@@ -25,6 +48,7 @@ export function HeroSection() {
             </div>
           </div>
 
+          {/* Desktop images */}
           <div className="hidden lg:flex gap-6 items-center">
             <div className="relative">
               <div className="w-56 h-[28rem] rounded-2xl shadow-2xl transform rotate-0 hover:scale-105 transition-transform duration-300 overflow-hidden">

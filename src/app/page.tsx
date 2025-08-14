@@ -1,5 +1,17 @@
 import { ArticleCard } from "@/components/ArticleCard"
 import { HeroSection } from "@/components/home/HeroSection"
+import { ArticlesCarousel } from "@/components/home/ArticlesCarousel"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Accueil - Actualités et guides des jeux Gacha",
+  description: "Découvrez les dernières actualités, guides experts et tier lists des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",
+  openGraph: {
+    title: "GachaActu - Toute l'actualité des jeux Gacha",
+    description: "Derniers guides, tier lists et événements de l'univers Gacha. Par des passionnés, pour les passionnés.",
+    type: "website",
+  },
+}
 
 const mockArticles = [
   {
@@ -63,13 +75,20 @@ export default function Home() {
     <>
       <HeroSection />
 
-      {/* News Section */}
-      <section className="py-16 bg-background">
+      {/* Articles Carousel */}
+      <ArticlesCarousel 
+        articles={mockArticles} 
+        title="Dernières actualités"
+        subtitle="Restez informé des dernières nouveautés, mises à jour et événements de l'univers Gacha"
+      />
+
+      {/* All News Section */}
+      <section className="py-16 bg-muted/50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Dernières actualités</h2>
+            <h2 className="text-3xl font-bold mb-4">Tous nos articles</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Restez informé des dernières nouveautés, mises à jour et événements de l'univers Gacha
+              Explorez l&#39;ensemble de nos guides, actualités et analyses
             </p>
           </div>
           
