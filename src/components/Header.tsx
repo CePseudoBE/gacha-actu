@@ -1,4 +1,4 @@
-import { GamepadIcon, ChevronDown, Newspaper, Gamepad2, Calendar, Trophy } from "lucide-react"
+import { GamepadIcon, Newspaper, Gamepad2, Calendar, Trophy } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import {

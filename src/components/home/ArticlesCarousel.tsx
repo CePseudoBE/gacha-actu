@@ -60,7 +60,7 @@ export function ArticlesCarousel({
         
         <div className="flex justify-center mt-8 md:hidden">
           <p className="text-sm text-muted-foreground">
-            Balayez pour voir plus d'articles →
+            Balayez pour voir plus d&apos;articles →
           </p>
         </div>
       </div>

@@ -10,17 +10,19 @@ export function HeroSection() {
           <div className="flex-1 relative">
             <Image
               src="/img/7ds.jpg"
-              alt="Seven Deadly Sins"
+              alt="Seven Deadly Sins Origins - Artwork officiel du jeu mobile"
               fill
               className="object-cover object-center opacity-30"
+              sizes="50vw"
             />
           </div>
           <div className="flex-1 relative">
             <Image
               src="/img/bsr.jpg"
-              alt="Bleach Soul Resonance"
+              alt="Bleach Soul Resonance - Artwork officiel du jeu mobile"
               fill
               className="object-cover object-center opacity-30"
+              sizes="50vw"
             />
           </div>
         </div>
@@ -34,7 +36,7 @@ export function HeroSection() {
               Par un fan, pour les fans.
             </h1>
             <p className="text-xl md:text-xl font-bold max-w-lg leading-relaxed text-gray-600 mb-8">
-              La source numéro une de l'actualité des jeux mobile et multi-plateformes. Bleach Soul Resonance, 7DS Origins et d'autres.
+              La source numéro une de l&apos;actualité des jeux mobile et multi-plateformes. Bleach Soul Resonance, 7DS Origins et d&apos;autres.
             </p>
             
             {/* Buttons */}
@@ -54,9 +56,11 @@ export function HeroSection() {
               <div className="w-56 h-[28rem] rounded-2xl shadow-2xl transform rotate-0 hover:scale-105 transition-transform duration-300 overflow-hidden">
                 <Image
                   src="/img/7ds.jpg"
-                  alt="Seven Deadly Sins"
+                  alt="Seven Deadly Sins Origins - Artwork officiel du jeu mobile Gacha"
                   fill
                   className="object-cover rounded-2xl"
+                  sizes="(max-width: 1024px) 0vw, 224px"
+                  priority
                 />
               </div>
             </div>
@@ -64,9 +68,11 @@ export function HeroSection() {
               <div className="w-56 h-[28rem] rounded-2xl shadow-2xl transform rotate-0 hover:scale-105 transition-transform duration-300 overflow-hidden">
                 <Image
                   src="/img/bsr.jpg"
-                  alt="Bleach Soul Resonance"
+                  alt="Bleach Soul Resonance - Artwork officiel du jeu mobile Gacha"
                   fill
                   className="object-cover rounded-2xl"
+                  sizes="(max-width: 1024px) 0vw, 224px"
+                  priority
                 />
               </div>
             </div>

@@ -71,8 +71,34 @@ const mockArticles = [
 ]
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "GachaActu",
+    "description": "Le site d'actualités spécialisé dans les jeux Gacha",
+    "url": "https://gachaactu.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://gachaactu.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "GachaActu"
+    },
+    "publisher": {
+      "@type": "Organization", 
+      "name": "GachaActu"
+    }
+  }
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      
       <HeroSection />
 
       {/* Articles Carousel */}
@@ -83,7 +109,7 @@ export default function Home() {
       />
 
       {/* All News Section */}
-      <section className="py-16 bg-muted/50">
+      <section className="py-16 bg-muted/50" role="main">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Tous nos articles</h2>
@@ -92,9 +118,9 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="feed" aria-label="Articles récents">
             {mockArticles.map((article, index) => (
-              <ArticleCard key={index} {...article} />
+              <ArticleCard key={`${article.slug}-${index}`} {...article} />
             ))}
           </div>
         </div>

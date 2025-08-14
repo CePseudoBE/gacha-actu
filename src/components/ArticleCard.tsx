@@ -27,9 +27,11 @@ export function ArticleCard({
         <div className="relative h-48 w-full mb-4 rounded-md overflow-hidden">
           <Image
             src={imageUrl}
-            alt={title}
+            alt={`Image d'illustration pour l'article : ${title} - ${game}`}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            priority={false}
           />
         </div>
       )}
