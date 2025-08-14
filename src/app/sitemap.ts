@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: `${baseUrl}/jeux`,
+      url: `${baseUrl}/games`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,
@@ -42,7 +42,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'bleach-soul-resonance',
     'seven-deadly-sins-origins'
   ].map(game => ({
-    url: `${baseUrl}/jeux/${game}`,
+    url: `${baseUrl}/games/${game}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.7,

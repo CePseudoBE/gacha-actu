@@ -145,7 +145,7 @@ export default function ActualitesPage() {
     "@type": "CollectionPage",
     "name": "Actualités Gacha",
     "description": "Toutes les actualités des jeux Gacha",
-    "url": "https://gachaactu.com/actualites",
+    "url": "https://gachaactu.com/news",
     "mainEntity": {
       "@type": "ItemList",
       "numberOfItems": allArticles.length,

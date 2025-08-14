@@ -54,13 +54,19 @@ export function HeroSection() {
             <div className="mt-6">
               {/* Mobile - Icônes côte à côte */}
               <div className="lg:hidden flex gap-4 items-center">
-                <Image
-                  src="/icons/ldplayer.svg"
-                  alt="LDPlayer - Émulateur Android pour PC"
-                  width={48}
-                  height={48}
-                  className="opacity-70 hover:opacity-100 transition-opacity duration-300"
-                />
+                <Link 
+                  href="https://leap.ldplayer.gg/T4DYBI9Ic"
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-block opacity-70 hover:opacity-100 transition-opacity duration-300"
+                >
+                  <Image
+                    src="/icons/ldplayer.svg"
+                    alt="LDPlayer - Émulateur Android pour PC"
+                    width={48}
+                    height={48}
+                  />
+                </Link>
                 <Link 
                   href="https://fr.gamesplanet.com/" 
                   target="_blank" 
@@ -79,7 +85,7 @@ export function HeroSection() {
               {/* Desktop - Logos côte à côte */}
               <div className="hidden lg:flex gap-6 items-center">
                 <Link 
-                  href="https://fr.ldplayer.net/" 
+                  href="https://leap.ldplayer.gg/T4DYBI9Ic"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-block hover:scale-105 transition-transform duration-300"

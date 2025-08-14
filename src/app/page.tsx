@@ -108,23 +108,6 @@ export default function Home() {
         subtitle="Restez informé des dernières nouveautés, mises à jour et événements de l'univers Gacha"
       />
 
-      {/* All News Section */}
-      <section className="py-16 bg-muted/50" role="main">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Tous nos articles</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explorez l&#39;ensemble de nos guides, actualités et analyses
-            </p>
-          </div>
-          
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="feed" aria-label="Articles récents">
-            {mockArticles.map((article, index) => (
-              <ArticleCard key={`${article.slug}-${index}`} {...article} />
-            ))}
-          </div>
-        </div>
-      </section>
     </>
   )
 }

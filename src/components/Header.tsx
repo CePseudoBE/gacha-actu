@@ -1,4 +1,4 @@
-import { GamepadIcon, Newspaper, Gamepad2, Calendar, Trophy } from "lucide-react"
+import { GamepadIcon, Newspaper, Gamepad2, Calendar, Trophy, Twitter, Youtube } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -30,7 +30,7 @@ export function Header() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Link href="/actualites" className={navigationMenuTriggerStyle()}>
+                  <Link href="/news" className={navigationMenuTriggerStyle()}>
                     <Newspaper className="mr-2 h-4 w-4" />
                     Actualités
                   </Link>
@@ -47,7 +47,7 @@ export function Header() {
                         <NavigationMenuLink asChild>
                           <Link
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                            href="/jeux"
+                            href="/games"
                           >
                             <Gamepad2 className="h-6 w-6" />
                             <div className="mb-2 mt-4 text-lg font-medium">
@@ -60,17 +60,17 @@ export function Header() {
                         </NavigationMenuLink>
                       </li>
                       <li>
-                        <ListItem href="/jeux/genshin-impact" title="Genshin Impact">
+                        <ListItem href="/games/genshin-impact" title="Genshin Impact">
                           RPG open-world avec système gacha
                         </ListItem>
                       </li>
                       <li>
-                        <ListItem href="/jeux/honkai-star-rail" title="Honkai Star Rail">
+                        <ListItem href="/games/honkai-star-rail" title="Honkai Star Rail">
                           RPG au tour par tour spatial
                         </ListItem>
                       </li>
                       <li>
-                        <ListItem href="/jeux/fire-emblem-heroes" title="Fire Emblem Heroes">
+                        <ListItem href="/games/fire-emblem-heroes" title="Fire Emblem Heroes">
                           Stratégie tactique mobile
                         </ListItem>
                       </li>
@@ -95,7 +95,7 @@ export function Header() {
             </NavigationMenu>
           </div>
 
-          {/* Discord et autres liens */}
+          {/* Réseaux sociaux */}
           <div className="hidden md:flex md:flex-1 md:justify-end">
             <div className="flex items-center space-x-2">
               <Link 
@@ -112,6 +112,24 @@ export function Header() {
                   height={20}
                   className="transition-opacity hover:opacity-80"
                 />
+              </Link>
+              <Link 
+                href="#" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 w-9 text-muted-foreground hover:text-foreground"
+                title="Suivez-nous sur Twitter"
+              >
+                <Twitter className="h-4 w-4" />
+              </Link>
+              <Link 
+                href="#" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 w-9 text-muted-foreground hover:text-foreground"
+                title="Abonnez-vous à notre chaîne YouTube"
+              >
+                <Youtube className="h-5 w-5" />
               </Link>
             </div>
           </div>
