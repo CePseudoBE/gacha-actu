@@ -21,7 +21,7 @@ const mockArticles = [
     publishedAt: "13 août 2025",
     game: "Genshin Impact",
     slug: "raiden-shogun-banniere-5-3",
-    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=400"
   },
   {
     title: "Honkai Star Rail : Guide complet de Firefly",
@@ -30,7 +30,7 @@ const mockArticles = [
     publishedAt: "12 août 2025", 
     game: "Honkai Star Rail",
     slug: "guide-firefly-honkai-star-rail",
-    imageUrl: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=800&h=400"
   },
   {
     title: "Fire Emblem Heroes : Événement Fallen Heroes",
@@ -39,7 +39,7 @@ const mockArticles = [
     publishedAt: "11 août 2025",
     game: "Fire Emblem Heroes", 
     slug: "evenement-fallen-heroes-feh",
-    imageUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=800&h=400"
   },
   {
     title: "Arknights : Tier List des Opérateurs après la mise à jour 15.0",
@@ -48,7 +48,7 @@ const mockArticles = [
     publishedAt: "10 août 2025",
     game: "Arknights",
     slug: "tier-list-operateurs-arknights-15-0",
-    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=400"
   },
   {
     title: "Blue Archive : Nouveau raid contre Binah",
@@ -57,7 +57,7 @@ const mockArticles = [
     publishedAt: "9 août 2025",
     game: "Blue Archive",
     slug: "raid-binah-blue-archive",
-    imageUrl: "https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&h=400"
   },
   {
     title: "Epic Seven : Guide du nouveau héros Belian ML",
@@ -66,7 +66,7 @@ const mockArticles = [
     publishedAt: "8 août 2025",
     game: "Epic Seven",
     slug: "guide-belian-ml-epic-seven",
-    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=200&fit=crop"
+    imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=800&h=400"
   }
 ]
 

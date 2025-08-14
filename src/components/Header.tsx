@@ -30,7 +30,7 @@ export function Header() {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <Link href="/" className={navigationMenuTriggerStyle()}>
+                  <Link href="/actualites" className={navigationMenuTriggerStyle()}>
                     <Newspaper className="mr-2 h-4 w-4" />
                     Actualités
                   </Link>
