@@ -68,7 +68,7 @@ export function HeroSection() {
                   />
                 </Link>
                 <Link 
-                  href="https://fr.gamesplanet.com/" 
+                  href="https://fr.gamesplanet.com/?ref=kakutvd"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-block opacity-70 hover:opacity-100 transition-opacity duration-300"
@@ -98,7 +98,7 @@ export function HeroSection() {
                   />
                 </Link>
                 <Link 
-                  href="https://fr.gamesplanet.com/" 
+                  href="https://fr.gamesplanet.com/?ref=kakutvd"
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-block hover:scale-105 transition-transform duration-300"
