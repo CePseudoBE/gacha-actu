@@ -2,10 +2,10 @@ import Image from "next/image"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[80vh] bg-gradient-to-br from-black to-[#051202] overflow-hidden">
+    <section className="relative min-h-[80vh] bg-gradient-to-br from-background to-card overflow-hidden">
       {/* Background images for mobile - subtle overlay */}
       <div className="absolute inset-0 lg:hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-black/40 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/40 z-10" />
         <div className="flex h-full">
           <div className="flex-1 relative">
             <Image
@@ -31,20 +31,20 @@ export function HeroSection() {
       <div className="container mx-auto px-4 h-full relative z-20">
         <div className="flex items-center justify-between h-full min-h-[80vh] gap-12">
           {/* Left side - Title and text */}
-          <div className="flex-1 text-gray-500 font-[family-name:var(--font-source-sans-3)]">
+          <div className="flex-1 text-foreground font-[family-name:var(--font-source-sans-3)]">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Par un fan, pour les fans.
             </h1>
-            <p className="text-xl md:text-xl font-bold max-w-lg leading-relaxed text-gray-600 mb-8">
+            <p className="text-xl md:text-xl font-bold max-w-lg leading-relaxed text-muted-foreground mb-8">
               La source numéro une de l&apos;actualité des jeux mobile et multi-plateformes. Bleach Soul Resonance, 7DS Origins et d&apos;autres.
             </p>
             
             {/* Buttons */}
             <div className="flex gap-4">
-              <button className="px-6 py-3 border-2 border-gray-500 text-gray-500 font-bold rounded-lg hover:border-gray-400 hover:text-gray-400 transition-colors duration-300">
+              <button className="px-6 py-3 border-2 border-primary text-primary font-bold rounded-lg hover:border-primary/80 hover:text-primary/80 transition-colors duration-300">
                 Actus
               </button>
-              <button className="px-6 py-3 border-2 border-gray-500 text-gray-500 font-bold rounded-lg hover:border-gray-400 hover:text-gray-400 transition-colors duration-300">
+              <button className="px-6 py-3 border-2 border-accent text-accent font-bold rounded-lg hover:border-accent/80 hover:text-accent/80 transition-colors duration-300">
                 À venir
               </button>
             </div>

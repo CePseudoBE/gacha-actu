@@ -20,7 +20,7 @@ export function Header() {
           {/* Logo centré sur mobile, à gauche sur desktop */}
           <div className="flex items-center space-x-2 md:flex-1">
             <GamepadIcon className="h-7 w-7 text-primary" />
-            <Link href="/" className="font-bold text-2xl bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            <Link href="/" className="font-bold text-2xl bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               GachaActu
             </Link>
           </div>
