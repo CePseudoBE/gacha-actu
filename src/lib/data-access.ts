@@ -2,6 +2,7 @@ import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
 import { Article, ArticleWithContent, ArticleFilters, ArticleSortOptions, PaginatedArticles } from '@/types/article'
 import { prisma } from './prisma'
+import { Prisma, ArticleCategory } from '@prisma/client'
 
 // Configuration du cache
 const CACHE_DURATION = {
@@ -23,7 +24,7 @@ const CACHE_TAGS = {
 /**
  * Utilitaires pour parser les dates françaises
  */
-function parseDate(dateStr: string): Date {
+function _parseDate(dateStr: string): Date {
   const [day, month, year] = dateStr.split(" ")
   const monthMap: Record<string, number> = {
     "janvier": 0, "février": 1, "mars": 2, "avril": 3, "mai": 4, "juin": 5,
@@ -36,7 +37,7 @@ function parseDate(dateStr: string): Date {
  * Types Prisma pour une meilleure sécurité TypeScript
  * Note: Prisma retourne les DateTime comme Date objects
  */
-type PrismaArticleWithRelations = {
+type _PrismaArticleWithRelations = {
   id: string
   title: string
   summary: string
@@ -59,7 +60,7 @@ type PrismaArticleWithRelations = {
 /**
  * Conversion des données Prisma vers types Article
  */
-function prismaToArticle(prismaArticle: any): Article {
+function prismaToArticle(prismaArticle: Prisma.ArticleGetPayload<{include: {game: true, tags: {include: {tag: true}}}}>): Article {
   // Conversion robuste des dates
   const publishedAt = prismaArticle.publishedAt instanceof Date 
     ? prismaArticle.publishedAt 
@@ -80,9 +81,9 @@ function prismaToArticle(prismaArticle: any): Article {
     publishedAt: formatDateToFrench(publishedAt),
     game: prismaArticle.game.name,
     slug: prismaArticle.slug,
-    imageUrl: prismaArticle.imageUrl,
-    tags: prismaArticle.tags?.map((at: any) => at.tag.name) || [],
-    readingTime: prismaArticle.readingTime,
+    imageUrl: prismaArticle.imageUrl || undefined,
+    tags: prismaArticle.tags?.map((at) => at.tag.name) || [],
+    readingTime: prismaArticle.readingTime || undefined,
     category: mapPrismaCategoryToType(prismaArticle.category),
     isPopular: prismaArticle.isPopular,
     createdAt: createdAt.toISOString(),
@@ -90,12 +91,12 @@ function prismaToArticle(prismaArticle: any): Article {
   }
 }
 
-function prismaToArticleWithContent(prismaArticle: any): ArticleWithContent {
+function prismaToArticleWithContent(prismaArticle: Prisma.ArticleGetPayload<{include: {game: true, tags: {include: {tag: true}}, seoKeywords: {include: {keyword: true}}}}>): ArticleWithContent {
   return {
     ...prismaToArticle(prismaArticle),
     content: prismaArticle.content,
-    metaDescription: prismaArticle.metaDescription,
-    seoKeywords: prismaArticle.seoKeywords?.map((ask: any) => ask.keyword.keyword) || []
+    metaDescription: prismaArticle.metaDescription || undefined,
+    seoKeywords: prismaArticle.seoKeywords?.map((ask) => ask.keyword.keyword) || []
   }
 }
 
@@ -124,13 +125,13 @@ function mapPrismaCategoryToType(category: string | null): 'news' | 'guide' | 't
   }
 }
 
-function mapTypeCategoryToPrisma(category: string): string {
+function mapTypeCategoryToPrisma(category: string): ArticleCategory {
   switch (category) {
-    case 'news': return 'NEWS'
-    case 'guide': return 'GUIDE'
-    case 'tier-list': return 'TIER_LIST'
-    case 'event': return 'EVENT'
-    default: return category.toUpperCase()
+    case 'news': return ArticleCategory.NEWS
+    case 'guide': return ArticleCategory.GUIDE
+    case 'tier-list': return ArticleCategory.TIER_LIST
+    case 'event': return ArticleCategory.EVENT
+    default: return ArticleCategory.NEWS
   }
 }
 
@@ -147,14 +148,14 @@ export const getAllArticles = unstable_cache(
     limit = 10
   ): Promise<PaginatedArticles> => {
     // Construction typée des filtres WHERE
-    const where: Parameters<typeof prisma.article.findMany>[0]['where'] = {}
+    const where: Prisma.ArticleWhereInput = {}
     
     // Filtres
     if (filters?.game && filters.game !== "Tous les jeux") {
       where.game = { name: filters.game }
     }
     if (filters?.category) {
-      where.category = mapTypeCategoryToPrisma(filters.category) as any
+      where.category = mapTypeCategoryToPrisma(filters.category)
     }
     if (filters?.author) {
       where.author = { contains: filters.author }
@@ -179,8 +180,7 @@ export const getAllArticles = unstable_cache(
     }
 
     // Tri typé
-    type OrderBy = Parameters<typeof prisma.article.findMany>[0]['orderBy']
-    let orderBy: OrderBy = { publishedAt: 'desc' } // Par défaut
+    let orderBy: Prisma.ArticleOrderByWithRelationInput | Prisma.ArticleOrderByWithRelationInput[] = { publishedAt: 'desc' } // Par défaut
     
     if (sort) {
       switch (sort.field) {

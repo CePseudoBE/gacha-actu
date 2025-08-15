@@ -155,3 +155,6 @@
     font-display: swap;
   }
 }
+
+/* Syntax highlighting styles */
+@import 'highlight.js/styles/github-dark.css';

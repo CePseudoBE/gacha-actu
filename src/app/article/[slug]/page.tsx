@@ -6,6 +6,10 @@ import { ArticleCard } from "@/components/ArticleCard"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import Image from "next/image"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import rehypeHighlight from "rehype-highlight"
+import rehypeRaw from "rehype-raw"
 
 interface ArticlePageProps {
   params: Promise<{ slug: string }>
@@ -149,11 +153,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </header>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none mb-12">
-          <div 
-            className="whitespace-pre-wrap leading-relaxed"
-            dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br />') }}
-          />
+        <div className="prose prose-lg max-w-none mb-12 prose-gray dark:prose-invert leading-relaxed">
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeHighlight, rehypeRaw]}
+          >
+            {article.content}
+          </ReactMarkdown>
         </div>
 
         <Separator className="my-12" />
