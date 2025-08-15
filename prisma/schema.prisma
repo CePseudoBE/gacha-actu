@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ArticleCategory {
+  NEWS
+  GUIDE
+  TIER_LIST
+  EVENT
+
+  @@map("article_category")
+}
+
+model Article {
+  id              String              @id @default(cuid())
+  title           String
+  summary         String
+  author          String
+  publishedAt     DateTime
+  slug            String              @unique
+  imageUrl        String?
+  content         String
+  metaDescription String?
+  readingTime     Int?
+  category        ArticleCategory?
+  isPopular       Boolean             @default(false)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  gameId          String
+  seoKeywords     ArticleSeoKeyword[]
+  tags            ArticleTag[]
+  game            Game                @relation(fields: [gameId], references: [id])
+
+  @@index([gameId])
+  @@index([isPopular])
+  @@index([publishedAt])
+  @@index([category])
+  @@index([author])
+  @@map("articles")
+}
+
+model Game {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  slug         String    @unique
+  description  String
+  genre        String
+  platform     String
+  developer    String
+  releaseDate  String
+  imageUrl     String
+  logoUrl      String
+  isPopular    Boolean   @default(false)
+  officialSite String
+  wiki         String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  articles     Article[]
+  tags         GameTag[]
+
+  @@index([isPopular])
+  @@index([genre])
+  @@map("games")
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  name      String       @unique
+  slug      String       @unique
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  articles  ArticleTag[]
+  games     GameTag[]
+
+  @@map("tags")
+}
+
+model ArticleTag {
+  articleId String
+  tagId     String
+  createdAt DateTime @default(now())
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@index([articleId])
+  @@index([tagId])
+  @@map("article_tags")
+}
+
+model GameTag {
+  gameId    String
+  tagId     String
+  createdAt DateTime @default(now())
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, tagId])
+  @@index([gameId])
+  @@index([tagId])
+  @@map("game_tags")
+}
+
+model SeoKeyword {
+  id        String              @id @default(cuid())
+  keyword   String              @unique
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  articles  ArticleSeoKeyword[]
+
+  @@map("seo_keywords")
+}
+
+model ArticleSeoKeyword {
+  articleId String
+  keywordId String
+  createdAt DateTime   @default(now())
+  keyword   SeoKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+  article   Article    @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, keywordId])
+  @@index([articleId])
+  @@index([keywordId])
+  @@map("article_seo_keywords")
+}
+

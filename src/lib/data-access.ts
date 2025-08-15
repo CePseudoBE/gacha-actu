@@ -1,18 +1,7 @@
 import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
 import { Article, ArticleWithContent, ArticleFilters, ArticleSortOptions, PaginatedArticles } from '@/types/article'
-
-// Re-export des fonctions de articles.ts pour compatibilité
-import { 
-  getAllArticles as _getAllArticles,
-  getArticleBySlug as _getArticleBySlug,
-  getPopularArticles as _getPopularArticles,
-  getArticlesByGame as _getArticlesByGame,
-  getRelatedArticles as _getRelatedArticles,
-  getAllGames as _getAllGames,
-  getAllAuthors as _getAllAuthors,
-  getAllTags as _getAllTags
-} from './articles'
+import { prisma } from './prisma'
 
 // Configuration du cache
 const CACHE_DURATION = {
@@ -32,8 +21,121 @@ const CACHE_TAGS = {
 }
 
 /**
- * Couche d'accès aux données optimisée pour Next.js
- * Cette couche sera facilement remplaçable par des appels DB
+ * Utilitaires pour parser les dates françaises
+ */
+function parseDate(dateStr: string): Date {
+  const [day, month, year] = dateStr.split(" ")
+  const monthMap: Record<string, number> = {
+    "janvier": 0, "février": 1, "mars": 2, "avril": 3, "mai": 4, "juin": 5,
+    "juillet": 6, "août": 7, "septembre": 8, "octobre": 9, "novembre": 10, "décembre": 11
+  }
+  return new Date(parseInt(year), monthMap[month] || 7, parseInt(day))
+}
+
+/**
+ * Types Prisma pour une meilleure sécurité TypeScript
+ * Note: Prisma retourne les DateTime comme Date objects
+ */
+type PrismaArticleWithRelations = {
+  id: string
+  title: string
+  summary: string
+  author: string
+  publishedAt: Date
+  slug: string
+  imageUrl: string | null
+  content: string
+  metaDescription: string | null
+  readingTime: number | null
+  category: string | null
+  isPopular: boolean
+  createdAt: Date
+  updatedAt: Date
+  game: { name: string }
+  tags: { tag: { name: string } }[]
+  seoKeywords?: { keyword: { keyword: string } }[]
+}
+
+/**
+ * Conversion des données Prisma vers types Article
+ */
+function prismaToArticle(prismaArticle: any): Article {
+  // Conversion robuste des dates
+  const publishedAt = prismaArticle.publishedAt instanceof Date 
+    ? prismaArticle.publishedAt 
+    : new Date(prismaArticle.publishedAt)
+    
+  const createdAt = prismaArticle.createdAt instanceof Date
+    ? prismaArticle.createdAt
+    : new Date(prismaArticle.createdAt)
+    
+  const updatedAt = prismaArticle.updatedAt instanceof Date
+    ? prismaArticle.updatedAt
+    : new Date(prismaArticle.updatedAt)
+
+  return {
+    title: prismaArticle.title,
+    summary: prismaArticle.summary,
+    author: prismaArticle.author,
+    publishedAt: formatDateToFrench(publishedAt),
+    game: prismaArticle.game.name,
+    slug: prismaArticle.slug,
+    imageUrl: prismaArticle.imageUrl,
+    tags: prismaArticle.tags?.map((at: any) => at.tag.name) || [],
+    readingTime: prismaArticle.readingTime,
+    category: mapPrismaCategoryToType(prismaArticle.category),
+    isPopular: prismaArticle.isPopular,
+    createdAt: createdAt.toISOString(),
+    updatedAt: updatedAt.toISOString()
+  }
+}
+
+function prismaToArticleWithContent(prismaArticle: any): ArticleWithContent {
+  return {
+    ...prismaToArticle(prismaArticle),
+    content: prismaArticle.content,
+    metaDescription: prismaArticle.metaDescription,
+    seoKeywords: prismaArticle.seoKeywords?.map((ask: any) => ask.keyword.keyword) || []
+  }
+}
+
+/**
+ * Utilitaires de conversion
+ */
+function formatDateToFrench(date: Date): string {
+  const monthNames = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre"
+  ]
+  const day = date.getDate()
+  const month = monthNames[date.getMonth()]
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
+}
+
+function mapPrismaCategoryToType(category: string | null): 'news' | 'guide' | 'tier-list' | 'event' | undefined {
+  if (!category) return undefined
+  switch (category) {
+    case 'NEWS': return 'news'
+    case 'GUIDE': return 'guide' 
+    case 'TIER_LIST': return 'tier-list'
+    case 'EVENT': return 'event'
+    default: return undefined
+  }
+}
+
+function mapTypeCategoryToPrisma(category: string): string {
+  switch (category) {
+    case 'news': return 'NEWS'
+    case 'guide': return 'GUIDE'
+    case 'tier-list': return 'TIER_LIST'
+    case 'event': return 'EVENT'
+    default: return category.toUpperCase()
+  }
+}
+
+/**
+ * Couche d'accès aux données avec Prisma + Next.js cache
  */
 
 // Articles avec pagination et filtres
@@ -44,7 +146,84 @@ export const getAllArticles = unstable_cache(
     page = 1,
     limit = 10
   ): Promise<PaginatedArticles> => {
-    return await _getAllArticles(filters, sort, page, limit)
+    // Construction typée des filtres WHERE
+    const where: Parameters<typeof prisma.article.findMany>[0]['where'] = {}
+    
+    // Filtres
+    if (filters?.game && filters.game !== "Tous les jeux") {
+      where.game = { name: filters.game }
+    }
+    if (filters?.category) {
+      where.category = mapTypeCategoryToPrisma(filters.category) as any
+    }
+    if (filters?.author) {
+      where.author = { contains: filters.author }
+    }
+    if (filters?.search) {
+      // SQLite n'a pas mode: 'insensitive', on simule avec LOWER()
+      const query = filters.search.toLowerCase()
+      where.OR = [
+        { title: { contains: query } },
+        { summary: { contains: query } },
+        { content: { contains: query } }
+      ]
+    }
+    if (filters?.tags?.length) {
+      where.tags = {
+        some: {
+          tag: {
+            name: { in: filters.tags }
+          }
+        }
+      }
+    }
+
+    // Tri typé
+    type OrderBy = Parameters<typeof prisma.article.findMany>[0]['orderBy']
+    let orderBy: OrderBy = { publishedAt: 'desc' } // Par défaut
+    
+    if (sort) {
+      switch (sort.field) {
+        case 'title':
+          orderBy = { title: sort.order }
+          break
+        case 'author':
+          orderBy = { author: sort.order }
+          break
+        case 'popularity':
+          orderBy = [{ isPopular: 'desc' }, { readingTime: 'desc' }]
+          break
+        case 'publishedAt':
+        default:
+          orderBy = { publishedAt: sort?.order || 'desc' }
+      }
+    }
+
+    // Requête avec pagination
+    const [articles, total] = await Promise.all([
+      prisma.article.findMany({
+        where,
+        orderBy,
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          game: true,
+          tags: {
+            include: { tag: true }
+          }
+        }
+      }),
+      prisma.article.count({ where })
+    ])
+
+    return {
+      articles: articles.map(prismaToArticle),
+      total,
+      page,
+      limit,
+      hasNext: (page * limit) < total,
+      hasPrevious: page > 1
+    }
   },
   ['all-articles'],
   { 
@@ -56,14 +235,39 @@ export const getAllArticles = unstable_cache(
 // Article individuel avec cache permanent (change rarement)
 export const getArticleBySlug = cache(
   async (slug: string): Promise<ArticleWithContent | null> => {
-    return await _getArticleBySlug(slug)
+    const article = await prisma.article.findUnique({
+      where: { slug },
+      include: {
+        game: true,
+        tags: {
+          include: { tag: true }
+        },
+        seoKeywords: {
+          include: { keyword: true }
+        }
+      }
+    })
+
+    return article ? prismaToArticleWithContent(article) : null
   }
 )
 
 // Articles populaires avec cache étendu
 export const getPopularArticles = unstable_cache(
   async (limit = 5): Promise<Article[]> => {
-    return await _getPopularArticles(limit)
+    const articles = await prisma.article.findMany({
+      where: { isPopular: true },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        game: true,
+        tags: {
+          include: { tag: true }
+        }
+      }
+    })
+
+    return articles.map(prismaToArticle)
   },
   ['popular-articles'],
   { 
@@ -75,7 +279,21 @@ export const getPopularArticles = unstable_cache(
 // Articles par jeu avec cache par paramètres
 export const getArticlesByGame = unstable_cache(
   async (game: string, limit = 10): Promise<Article[]> => {
-    return await _getArticlesByGame(game, limit)
+    const articles = await prisma.article.findMany({
+      where: { 
+        game: { name: game } 
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        game: true,
+        tags: {
+          include: { tag: true }
+        }
+      }
+    })
+
+    return articles.map(prismaToArticle)
   },
   ['articles-by-game'],
   { 
@@ -87,14 +305,60 @@ export const getArticlesByGame = unstable_cache(
 // Articles liés
 export const getRelatedArticles = cache(
   async (slug: string, limit = 4): Promise<Article[]> => {
-    return await _getRelatedArticles(slug, limit)
+    // D'abord récupérer l'article actuel
+    const currentArticle = await prisma.article.findUnique({
+      where: { slug },
+      include: { 
+        game: true,
+        tags: { include: { tag: true } }
+      }
+    })
+
+    if (!currentArticle) return []
+
+    // Chercher les articles liés (même jeu ou tags communs)
+    const articles = await prisma.article.findMany({
+      where: {
+        AND: [
+          { slug: { not: slug } }, // Exclure l'article actuel
+          {
+            OR: [
+              { gameId: currentArticle.gameId }, // Même jeu
+              {
+                tags: {
+                  some: {
+                    tagId: {
+                      in: currentArticle.tags.map(at => at.tagId)
+                    }
+                  }
+                }
+              } // Tags communs
+            ]
+          }
+        ]
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: {
+        game: true,
+        tags: {
+          include: { tag: true }
+        }
+      }
+    })
+
+    return articles.map(prismaToArticle)
   }
 )
 
 // Métadonnées avec cache long (changent rarement)
 export const getAllGames = unstable_cache(
   async (): Promise<string[]> => {
-    return _getAllGames()
+    const games = await prisma.game.findMany({
+      select: { name: true },
+      orderBy: { name: 'asc' }
+    })
+    return ["Tous les jeux", ...games.map(g => g.name)]
   },
   ['all-games'],
   { 
@@ -105,7 +369,12 @@ export const getAllGames = unstable_cache(
 
 export const getAllAuthors = unstable_cache(
   async (): Promise<string[]> => {
-    return _getAllAuthors()
+    const authors = await prisma.article.findMany({
+      select: { author: true },
+      distinct: ['author'],
+      orderBy: { author: 'asc' }
+    })
+    return authors.map(a => a.author)
   },
   ['all-authors'],
   { 
@@ -116,7 +385,11 @@ export const getAllAuthors = unstable_cache(
 
 export const getAllTags = unstable_cache(
   async (): Promise<string[]> => {
-    return _getAllTags()
+    const tags = await prisma.tag.findMany({
+      select: { name: true },
+      orderBy: { name: 'asc' }
+    })
+    return tags.map(t => t.name)
   },
   ['all-tags'],
   { 
@@ -146,45 +419,3 @@ export async function revalidateAll() {
   Object.values(CACHE_TAGS).forEach(tag => revalidateTag(tag))
 }
 
-/**
- * Interface pour la future migration DB
- * Quand on passera à une DB, on remplacera juste les implémentations ci-dessus
- */
-
-// Exemple de ce que ça pourrait donner avec Prisma/Drizzle :
-/*
-export const getAllArticles = unstable_cache(
-  async (filters, sort, page, limit) => {
-    const db = await getDatabase()
-    
-    let query = db.select().from(articles)
-    
-    if (filters?.game) {
-      query = query.where(eq(articles.game, filters.game))
-    }
-    
-    if (sort?.field === 'publishedAt') {
-      query = query.orderBy(
-        sort.order === 'desc' 
-          ? desc(articles.publishedAt) 
-          : asc(articles.publishedAt)
-      )
-    }
-    
-    const results = await query
-      .limit(limit)
-      .offset((page - 1) * limit)
-    
-    return {
-      articles: results,
-      total: await db.select({ count: count() }).from(articles),
-      page,
-      limit,
-      hasNext: results.length === limit,
-      hasPrevious: page > 1
-    }
-  },
-  ['all-articles'],
-  { revalidate: CACHE_DURATION.ARTICLES }
-)
-*/
