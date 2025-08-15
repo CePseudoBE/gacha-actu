@@ -12,7 +12,8 @@ import {
   Trophy,
   ExternalLink,
   Clock,
-  TrendingUp
+  TrendingUp,
+  Calculator
 } from "lucide-react"
 import { Article } from "@/types/article"
 import Link from "next/link"
@@ -132,9 +133,14 @@ export function GameTabs({ game, articles }: GameTabsProps) {
                   <CardContent className="p-8 text-center">
                     <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                     <h3 className="text-lg font-medium mb-2">Aucun guide disponible</h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground mb-4">
                       Les guides pour {game.name} seront publiés prochainement.
                     </p>
+                    <Button variant="outline" asChild>
+                      <Link href="/guides">
+                        Voir tous les guides
+                      </Link>
+                    </Button>
                   </CardContent>
                 </Card>
               )}
@@ -154,22 +160,26 @@ export function GameTabs({ game, articles }: GameTabsProps) {
             </TabsContent>
 
             <TabsContent value="community" className="space-y-6">
-              <h2 className="text-xl md:text-2xl font-bold">Rejoindre la communauté</h2>
+              <h2 className="text-xl md:text-2xl font-bold">Communauté & Ressources</h2>
+              
+              {/* Ressources officielles */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Users className="w-5 h-5" />
-                      Discord
+                      <ExternalLink className="w-5 h-5" />
+                      Site officiel
                     </CardTitle>
                     <CardDescription>
-                      Rejoignez notre serveur Discord pour discuter en temps réel
+                      Site officiel de {game.name} avec les dernières news
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button className="w-full">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Rejoindre Discord
+                    <Button className="w-full" asChild>
+                      <Link href={game.officialSite} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Visiter le site
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
@@ -177,20 +187,47 @@ export function GameTabs({ game, articles }: GameTabsProps) {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Trophy className="w-5 h-5" />
-                      Reddit
+                      <BookOpen className="w-5 h-5" />
+                      Wiki
                     </CardTitle>
                     <CardDescription>
-                      Discussions approfondies et partage de stratégies
+                      Base de données complète et guides communautaires
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Button variant="outline" className="w-full">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Voir le subreddit
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href={game.wiki} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Consulter le wiki
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Communauté Anime Gacha Pulse */}
+              <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-6">
+                <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  Communauté Anime Gacha Pulse
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Rejoignez notre communauté pour discuter de {game.name}, partager vos stratégies et poser vos questions !
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Button className="w-full" asChild>
+                    <Link href="https://discord.gg/animegachapulse" target="_blank" rel="noopener noreferrer">
+                      <Users className="w-4 h-4 mr-2" />
+                      Discord
+                    </Link>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/contact">
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Nous contacter
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </TabsContent>
           </div>
@@ -245,20 +282,30 @@ export function GameTabs({ game, articles }: GameTabsProps) {
               </CardContent>
             </Card>
 
-            {/* Jeux similaires */}
+            {/* Actions rapides */}
             <Card>
               <CardHeader>
-                <CardTitle>Jeux similaires</CardTitle>
+                <CardTitle>Actions rapides</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Link href="/games/honkai-star-rail" className="block p-3 rounded-lg hover:bg-accent transition-colors">
-                  <div className="font-medium">Honkai Star Rail</div>
-                  <div className="text-sm text-muted-foreground">RPG au tour par tour</div>
-                </Link>
-                <Link href="/games/fire-emblem-heroes" className="block p-3 rounded-lg hover:bg-accent transition-colors">
-                  <div className="font-medium">Fire Emblem Heroes</div>
-                  <div className="text-sm text-muted-foreground">Stratégie tactique</div>
-                </Link>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/guides">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    Tous les guides
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/news">
+                    <Newspaper className="w-4 h-4 mr-2" />
+                    Toutes les actualités
+                  </Link>
+                </Button>
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href="/tier-lists">
+                    <Trophy className="w-4 h-4 mr-2" />
+                    Tier Lists
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

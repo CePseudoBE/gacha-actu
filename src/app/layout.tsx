@@ -22,20 +22,20 @@ const sourceSans3 = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://gachaactu.com'),
+  metadataBase: new URL('https://animegachapulse.com'),
   title: {
-    default: "GachaActu - L'actualité des jeux Gacha par des passionnés",
-    template: "%s | GachaActu"
+    default: "Anime Gacha Pulse - L'actualité des jeux Gacha par des passionnés",
+    template: "%s | Anime Gacha Pulse"
   },
-  description: "GachaActu est LE site d'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news sur Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",
+  description: "Anime Gacha Pulse est LE site d'actualités pour les fans de jeux Gacha. Guides experts, tier lists, événements et dernières news sur Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",
   keywords: [
     "gacha", "jeux gacha", "genshin impact", "honkai star rail", "fire emblem heroes",
     "arknights", "blue archive", "epic seven", "actualités gaming", "guides jeux",
     "tier list", "événements gacha", "bannières", "pulls", "héros"
   ],
-  authors: [{ name: "Équipe GachaActu" }],
-  creator: "GachaActu",
-  publisher: "GachaActu",
+  authors: [{ name: "Équipe Anime Gacha Pulse" }],
+  creator: "Anime Gacha Pulse",
+  publisher: "Anime Gacha Pulse",
   formatDetection: {
     email: false,
     address: false,
@@ -44,25 +44,25 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://gachaactu.com",
-    siteName: "GachaActu",
-    title: "GachaActu - L'actualité des jeux Gacha par des passionnés",
+    url: "https://animegachapulse.com",
+    siteName: "Anime Gacha Pulse",
+    title: "Anime Gacha Pulse - L'actualité des jeux Gacha par des passionnés",
     description: "Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris. Par des fans, pour les fans.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "GachaActu - Actualités jeux Gacha",
+        alt: "Anime Gacha Pulse - Actualités jeux Gacha",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "GachaActu - L'actualité des jeux Gacha",
+    title: "Anime Gacha Pulse - L'actualité des jeux Gacha",
     description: "Guides experts, tier lists et actualités sur tous vos jeux Gacha favoris",
     images: ["/og-image.jpg"],
-    creator: "@gachaactu",
+    creator: "@animegachapulse",
   },
   robots: {
     index: true,

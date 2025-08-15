@@ -363,7 +363,167 @@ L'événement "Fallen Heroes" revient avec de nouveaux héros corrompus à recru
   await prisma.articleTag.create({ data: { articleId: article3.id, tagId: evenementTag.id } })
   await prisma.articleTag.create({ data: { articleId: article3.id, tagId: herosCorrompusTag.id } })
 
-  // 6. Associer les mots-clés SEO
+  // 6. Créer les guides
+  console.log('📚 Creating guides...')
+
+  const guide1 = await prisma.guide.upsert({
+    where: { slug: 'raiden-shogun-build-complet' },
+    update: {},
+    create: {
+      title: 'Guide complet Raiden Shogun : Build optimal et stratégies',
+      summary: 'Découvrez le build optimal pour Raiden Shogun, ses meilleures équipes et stratégies de combat avancées.',
+      author: 'Alex Gacha',
+      publishedAt: new Date('2025-08-10'),
+      slug: 'raiden-shogun-build-complet',
+      gameId: genshin.id,
+      imageUrl: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&h=400',
+      content: `# Guide complet Raiden Shogun
+
+La Raiden Shogun est l'un des personnages les plus polyvalents de Genshin Impact...`,
+      readingTime: 12,
+      difficulty: 'INTERMEDIATE',
+      guideType: 'CHARACTER_BUILD',
+      isPopular: true,
+      viewCount: 2500,
+      metaDescription: 'Guide complet pour optimiser Raiden Shogun dans Genshin Impact : builds, équipes, artefacts et stratégies.'
+    }
+  })
+
+  const guide2 = await prisma.guide.upsert({
+    where: { slug: 'genshin-impact-guide-debutant' },
+    update: {},
+    create: {
+      title: 'Guide débutant Genshin Impact : Les bases pour bien commencer',
+      summary: 'Tout ce qu\'un débutant doit savoir pour bien débuter dans Genshin Impact : système de tirage, exploration, combat.',
+      author: 'Marie Guide',
+      publishedAt: new Date('2025-08-08'),
+      slug: 'genshin-impact-guide-debutant',
+      gameId: genshin.id,
+      imageUrl: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&h=400',
+      content: `# Guide débutant Genshin Impact
+
+Bienvenue dans le monde de Teyvat ! Ce guide vous accompagnera...`,
+      readingTime: 15,
+      difficulty: 'BEGINNER',
+      guideType: 'BEGINNER',
+      isPopular: true,
+      viewCount: 5000,
+      metaDescription: 'Guide complet pour débuter dans Genshin Impact : conseils, astuces et mécaniques essentielles.'
+    }
+  })
+
+  const guide3 = await prisma.guide.upsert({
+    where: { slug: 'honkai-star-rail-equipements-reliques' },
+    update: {},
+    create: {
+      title: 'Honkai Star Rail : Guide des équipements et reliques optimales',
+      summary: 'Apprenez à optimiser vos équipements et reliques pour maximiser la puissance de vos personnages.',
+      author: 'Thomas HSR',
+      publishedAt: new Date('2025-08-07'),
+      slug: 'honkai-star-rail-equipements-reliques',
+      gameId: honkai.id,
+      imageUrl: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=800&h=400',
+      content: `# Guide équipements Honkai Star Rail
+
+Les équipements et reliques sont cruciaux pour optimiser vos personnages...`,
+      readingTime: 10,
+      difficulty: 'INTERMEDIATE',
+      guideType: 'EQUIPMENT',
+      isPopular: false,
+      viewCount: 1200,
+      metaDescription: 'Guide complet des équipements et reliques dans Honkai Star Rail pour optimiser vos builds.'
+    }
+  })
+
+  const guide4 = await prisma.guide.upsert({
+    where: { slug: 'arknights-strategie-avancee-defense' },
+    update: {},
+    create: {
+      title: 'Arknights : Stratégies avancées de tower defense',
+      summary: 'Maîtrisez les stratégies avancées d\'Arknights : placement optimal, synergies d\'opérateurs et tactiques de niveau expert.',
+      author: 'Sophie Arknight',
+      publishedAt: new Date('2025-08-05'),
+      slug: 'arknights-strategie-avancee-defense',
+      gameId: arknights.id,
+      imageUrl: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&h=400',
+      content: `# Stratégies avancées Arknights
+
+Pour exceller dans Arknights, la stratégie prime sur la force brute...`,
+      readingTime: 20,
+      difficulty: 'EXPERT',
+      guideType: 'STRATEGY',
+      isPopular: true,
+      viewCount: 3200,
+      metaDescription: 'Stratégies expertes pour Arknights : placement, synergies et tactiques avancées de tower defense.'
+    }
+  })
+
+  // 7. Créer les sections de guides
+  console.log('📖 Creating guide sections...')
+
+  await prisma.guideSection.create({
+    data: {
+      title: 'Introduction à Raiden Shogun',
+      content: 'La Raiden Shogun est l\'Archon Electro d\'Inazuma...',
+      order: 1,
+      guideId: guide1.id
+    }
+  })
+
+  await prisma.guideSection.create({
+    data: {
+      title: 'Artefacts recommandés',
+      content: 'Les meilleurs sets d\'artefacts pour Raiden Shogun...',
+      order: 2,
+      guideId: guide1.id
+    }
+  })
+
+  await prisma.guideSection.create({
+    data: {
+      title: 'Compositions d\'équipe',
+      content: 'Les meilleures équipes pour exploiter le potentiel de Raiden...',
+      order: 3,
+      guideId: guide1.id
+    }
+  })
+
+  // 8. Créer les prérequis
+  console.log('📋 Creating guide prerequisites...')
+
+  await prisma.guidePrerequisite.create({
+    data: {
+      description: 'Avoir débloqué Inazuma',
+      guideId: guide1.id
+    }
+  })
+
+  await prisma.guidePrerequisite.create({
+    data: {
+      description: 'Niveau d\'aventure 30+',
+      guideId: guide1.id
+    }
+  })
+
+  // 9. Associer les tags aux guides
+  console.log('🏷️ Creating guide-tag relationships...')
+
+  // Guide 1: Raiden Shogun
+  await prisma.guideTag.create({ data: { guideId: guide1.id, tagId: guideTag.id } })
+  await prisma.guideTag.create({ data: { guideId: guide1.id, tagId: electroTag.id } })
+  await prisma.guideTag.create({ data: { guideId: guide1.id, tagId: dpsTag.id } })
+
+  // Guide 2: Débutant Genshin
+  await prisma.guideTag.create({ data: { guideId: guide2.id, tagId: guideTag.id } })
+
+  // Guide 3: Équipements HSR
+  await prisma.guideTag.create({ data: { guideId: guide3.id, tagId: guideTag.id } })
+
+  // Guide 4: Stratégie Arknights
+  await prisma.guideTag.create({ data: { guideId: guide4.id, tagId: guideTag.id } })
+  await prisma.guideTag.create({ data: { guideId: guide4.id, tagId: operateursTag.id } })
+
+  // 10. Associer les mots-clés SEO aux articles
   console.log('🔍 Creating article-keyword relationships...')
   await prisma.articleSeoKeyword.create({ data: { articleId: article1.id, keywordId: gachaKeyword.id } })
   await prisma.articleSeoKeyword.create({ data: { articleId: article1.id, keywordId: actualitesKeyword.id } })
@@ -371,14 +531,27 @@ L'événement "Fallen Heroes" revient avec de nouveaux héros corrompus à recru
   await prisma.articleSeoKeyword.create({ data: { articleId: article2.id, keywordId: gachaKeyword.id } })
   await prisma.articleSeoKeyword.create({ data: { articleId: article3.id, keywordId: actualitesKeyword.id } })
 
+  // 11. Associer les mots-clés SEO aux guides
+  console.log('🔍 Creating guide-keyword relationships...')
+  await prisma.guideSeoKeyword.create({ data: { guideId: guide1.id, keywordId: guidesKeyword.id } })
+  await prisma.guideSeoKeyword.create({ data: { guideId: guide1.id, keywordId: gachaKeyword.id } })
+  await prisma.guideSeoKeyword.create({ data: { guideId: guide2.id, keywordId: guidesKeyword.id } })
+  await prisma.guideSeoKeyword.create({ data: { guideId: guide3.id, keywordId: guidesKeyword.id } })
+  await prisma.guideSeoKeyword.create({ data: { guideId: guide4.id, keywordId: guidesKeyword.id } })
+
   console.log('✅ Database seeded successfully!')
   console.log(`📊 Created:`)
   console.log(`   - ${await prisma.game.count()} games`)
   console.log(`   - ${await prisma.tag.count()} tags`)
   console.log(`   - ${await prisma.seoKeyword.count()} SEO keywords`)
   console.log(`   - ${await prisma.article.count()} articles`)
+  console.log(`   - ${await prisma.guide.count()} guides`)
+  console.log(`   - ${await prisma.guideSection.count()} guide sections`)
+  console.log(`   - ${await prisma.guidePrerequisite.count()} guide prerequisites`)
   console.log(`   - ${await prisma.articleTag.count()} article-tag relationships`)
+  console.log(`   - ${await prisma.guideTag.count()} guide-tag relationships`)
   console.log(`   - ${await prisma.articleSeoKeyword.count()} article-keyword relationships`)
+  console.log(`   - ${await prisma.guideSeoKeyword.count()} guide-keyword relationships`)
 }
 
 main()

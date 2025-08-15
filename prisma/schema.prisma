@@ -16,6 +16,28 @@ enum ArticleCategory {
   @@map("article_category")
 }
 
+enum GuideType {
+  CHARACTER_BUILD
+  TEAM_COMP
+  EQUIPMENT
+  STRATEGY
+  BEGINNER
+  ADVANCED
+  EVENT_GUIDE
+  FARMING
+
+  @@map("guide_type")
+}
+
+enum DifficultyLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+
+  @@map("difficulty_level")
+}
+
 model Article {
   id              String              @id @default(cuid())
   title           String
@@ -61,6 +83,7 @@ model Game {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   articles     Article[]
+  guides       Guide[]
   tags         GameTag[]
 
   @@index([isPopular])
@@ -76,6 +99,7 @@ model Tag {
   updatedAt DateTime     @updatedAt
   articles  ArticleTag[]
   games     GameTag[]
+  guides    GuideTag[]
 
   @@map("tags")
 }
@@ -112,6 +136,7 @@ model SeoKeyword {
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
   articles  ArticleSeoKeyword[]
+  guides    GuideSeoKeyword[]
 
   @@map("seo_keywords")
 }
@@ -127,5 +152,89 @@ model ArticleSeoKeyword {
   @@index([articleId])
   @@index([keywordId])
   @@map("article_seo_keywords")
+}
+
+model Guide {
+  id                String              @id @default(cuid())
+  title             String
+  summary           String
+  content           String
+  author            String
+  publishedAt       DateTime
+  updatedAt         DateTime            @updatedAt
+  createdAt         DateTime            @default(now())
+  slug              String              @unique
+  imageUrl          String?
+  readingTime       Int?
+  difficulty        DifficultyLevel
+  guideType         GuideType
+  isPopular         Boolean             @default(false)
+  viewCount         Int                 @default(0)
+  gameId            String
+  metaDescription   String?
+  seoKeywords       GuideSeoKeyword[]
+  tags              GuideTag[]
+  prerequisites     GuidePrerequisite[]
+  sections          GuideSection[]
+  game              Game                @relation(fields: [gameId], references: [id])
+
+  @@index([gameId])
+  @@index([isPopular])
+  @@index([publishedAt])
+  @@index([difficulty])
+  @@index([guideType])
+  @@index([author])
+  @@map("guides")
+}
+
+model GuideSection {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  order     Int
+  guideId   String
+  createdAt DateTime @default(now())
+  guide     Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@index([guideId])
+  @@index([order])
+  @@map("guide_sections")
+}
+
+model GuidePrerequisite {
+  id          String   @id @default(cuid())
+  description String
+  guideId     String
+  createdAt   DateTime @default(now())
+  guide       Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@index([guideId])
+  @@map("guide_prerequisites")
+}
+
+model GuideTag {
+  guideId   String
+  tagId     String
+  createdAt DateTime @default(now())
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  guide     Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@id([guideId, tagId])
+  @@index([guideId])
+  @@index([tagId])
+  @@map("guide_tags")
+}
+
+model GuideSeoKeyword {
+  guideId   String
+  keywordId String
+  createdAt DateTime   @default(now())
+  keyword   SeoKeyword @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+  guide     Guide      @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@id([guideId, keywordId])
+  @@index([guideId])
+  @@index([keywordId])
+  @@map("guide_seo_keywords")
 }
 

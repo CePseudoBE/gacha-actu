@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "Actualités - Toutes les news des jeux Gacha",
   description: "Découvrez toutes les actualités, mises à jour et événements des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et bien plus !",
   openGraph: {
-    title: "Actualités Gacha - GachaActu",
+    title: "Actualités Gacha - Anime Gacha Pulse",
     description: "Toutes les dernières news de l'univers Gacha en un seul endroit.",
     type: "website",
   },
@@ -22,7 +22,7 @@ export default async function ActualitesPage() {
     "@type": "CollectionPage",
     "name": "Actualités Gacha",
     "description": "Toutes les actualités des jeux Gacha",
-    "url": "https://gachaactu.com/news",
+    "url": "https://animegachapulse.com/news",
     "mainEntity": {
       "@type": "ItemList",
       "numberOfItems": allArticles.length,

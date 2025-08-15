@@ -2,7 +2,7 @@ import { Metadata } from "next"
 import { notFound } from "next/navigation"
 import dynamic from "next/dynamic"
 import { GameHeader } from "@/components/games/GameHeader"
-import { getArticlesByGame } from "@/lib/data-access"
+import { getArticlesByGame, getGameBySlug } from "@/lib/data-access"
 import { Skeleton } from "@/components/ui/skeleton"
 
 // Lazy load du composant lourd
@@ -33,83 +33,9 @@ interface GamePageProps {
   params: Promise<{ game: string }>
 }
 
-// Données des jeux supportés
-const gamesData = {
-  "genshin-impact": {
-    name: "Genshin Impact",
-    description: "RPG open-world avec système gacha développé par miHoYo",
-    genre: "Action RPG",
-    platform: "Mobile, PC, PlayStation",
-    developer: "miHoYo",
-    releaseDate: "2020",
-    imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200&h=600",
-    logoUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=200&h=100",
-    isPopular: true,
-    tags: ["Gacha", "Open World", "Anime", "Co-op"],
-    officialSite: "https://genshin.hoyoverse.com",
-    wiki: "https://genshin-impact.fandom.com"
-  },
-  "honkai-star-rail": {
-    name: "Honkai Star Rail",
-    description: "RPG au tour par tour spatial avec système gacha",
-    genre: "Turn-based RPG",
-    platform: "Mobile, PC",
-    developer: "miHoYo",
-    releaseDate: "2023",
-    imageUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=1200&h=600",
-    logoUrl: "https://images.unsplash.com/photo-1560472355-536de3962603?w=200&h=100",
-    isPopular: true,
-    tags: ["Gacha", "Turn-based", "Sci-Fi", "Story-rich"],
-    officialSite: "https://hsr.hoyoverse.com",
-    wiki: "https://honkai-star-rail.fandom.com"
-  },
-  "bleach-soul-resonance": {
-    name: "Bleach Soul Resonance",
-    description: "Action RPG basé sur l'anime Bleach",
-    genre: "Action RPG",
-    platform: "Mobile",
-    developer: "KLab",
-    releaseDate: "2024",
-    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=600",
-    logoUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=100",
-    isPopular: false,
-    tags: ["Gacha", "Anime", "Action", "PvP"],
-    officialSite: "#",
-    wiki: "#"
-  },
-  "fire-emblem-heroes": {
-    name: "Fire Emblem Heroes",
-    description: "Stratégie tactique mobile",
-    genre: "Tactical RPG",
-    platform: "Mobile",
-    developer: "Nintendo",
-    releaseDate: "2017",
-    imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=1200&h=600",
-    logoUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?w=200&h=100",
-    isPopular: true,
-    tags: ["Gacha", "Strategy", "Nintendo", "Tactical"],
-    officialSite: "https://fire-emblem-heroes.com",
-    wiki: "https://feheroes.fandom.com"
-  },
-  "arknights": {
-    name: "Arknights",
-    description: "Tower defense stratégique",
-    genre: "Tower Defense",
-    platform: "Mobile, PC",
-    developer: "Hypergryph",
-    releaseDate: "2019",
-    imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200&h=600",
-    logoUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&h=100",
-    isPopular: true,
-    tags: ["Gacha", "Tower Defense", "Strategy", "Anime"],
-    officialSite: "https://www.arknights.global",
-    wiki: "https://arknights.fandom.com"
-  }
-}
-
 export async function generateMetadata({ params }: GamePageProps): Promise<Metadata> {
   const { game: gameSlug } = await params
-  const gameData = gamesData[gameSlug as keyof typeof gamesData]
+  const gameData = await getGameBySlug(gameSlug)
   
   if (!gameData) {
     return {
@@ -119,10 +45,10 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
   }
 
   return {
-    title: `${gameData.name} - Actualités et Guides | GachaActu`,
+    title: `${gameData.name} - Actualités et Guides | Anime Gacha Pulse`,
     description: `Découvrez toutes les actualités, guides et tier lists de ${gameData.name}. ${gameData.description}`,
     openGraph: {
-      title: `${gameData.name} - GachaActu`,
+      title: `${gameData.name} - Anime Gacha Pulse`,
       description: gameData.description,
       type: "website",
       images: gameData.imageUrl ? [{ url: gameData.imageUrl }] : [],
@@ -133,7 +59,7 @@ export async function generateMetadata({ params }: GamePageProps): Promise<Metad
 
 export default async function GamePage({ params }: GamePageProps) {
   const { game: gameSlug } = await params
-  const gameData = gamesData[gameSlug as keyof typeof gamesData]
+  const gameData = await getGameBySlug(gameSlug)
   
   if (!gameData) {
     notFound()
@@ -155,7 +81,7 @@ export default async function GamePage({ params }: GamePageProps) {
     },
     "datePublished": gameData.releaseDate,
     "image": gameData.imageUrl,
-    "url": `https://gachaactu.com/games/${gameSlug}`,
+    "url": `https://animegachapulse.com/games/${gameSlug}`,
     "aggregateRating": gameData.isPopular ? {
       "@type": "AggregateRating",
       "ratingValue": "4.5",
@@ -177,9 +103,15 @@ export default async function GamePage({ params }: GamePageProps) {
   )
 }
 
-// Générer les pages statiques pour les jeux principaux
+// Générer les pages statiques pour tous les jeux en base
 export async function generateStaticParams() {
-  return Object.keys(gamesData).map((gameSlug) => ({
-    game: gameSlug,
+  const { prisma } = await import('@/lib/prisma')
+  
+  const games = await prisma.game.findMany({
+    select: { slug: true }
+  })
+  
+  return games.map((game) => ({
+    game: game.slug,
   }))
 }

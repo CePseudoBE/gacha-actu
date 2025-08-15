@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Accueil - Actualités et guides des jeux Gacha",
   description: "Découvrez les dernières actualités, guides experts et tier lists des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",
   openGraph: {
-    title: "GachaActu - Toute l'actualité des jeux Gacha",
+    title: "Anime Gacha Pulse - Toute l'actualité des jeux Gacha",
     description: "Derniers guides, tier lists et événements de l'univers Gacha. Par des passionnés, pour les passionnés.",
     type: "website",
   },

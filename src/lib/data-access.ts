@@ -419,3 +419,51 @@ export async function revalidateAll() {
   Object.values(CACHE_TAGS).forEach(tag => revalidateTag(tag))
 }
 
+// Jeu individuel par slug avec cache
+export const getGameBySlug = cache(
+  async (slug: string) => {
+    const game = await prisma.game.findUnique({
+      where: { slug },
+      include: {
+        _count: {
+          select: {
+            articles: true,
+            guides: true,
+          }
+        },
+        tags: {
+          include: {
+            tag: {
+              select: {
+                name: true,
+                slug: true,
+              }
+            }
+          }
+        }
+      }
+    })
+
+    if (!game) return null
+
+    return {
+      id: game.id,
+      name: game.name,
+      slug: game.slug,
+      description: game.description,
+      genre: game.genre,
+      platform: game.platform,
+      developer: game.developer,
+      releaseDate: game.releaseDate,
+      imageUrl: game.imageUrl,
+      logoUrl: game.logoUrl,
+      isPopular: game.isPopular,
+      officialSite: game.officialSite,
+      wiki: game.wiki,
+      articlesCount: game._count.articles,
+      guidesCount: game._count.guides,
+      tags: game.tags.map(t => t.tag.name),
+    }
+  }
+)
+

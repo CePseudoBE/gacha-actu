@@ -2,7 +2,7 @@ import { NavigationConfig } from '@/types/navigation'
 
 export const navigationConfig: NavigationConfig = {
   logo: {
-    text: 'GachaActu',
+    text: 'Anime Gacha Pulse',
     href: '/'
   },
   items: [
@@ -73,7 +73,7 @@ export const navigationConfig: NavigationConfig = {
     {
       id: 'discord',
       name: 'Discord',
-      href: 'https://discord.gg/ton-discord',
+      href: 'https://discord.gg/animegachapulse',
       icon: '/icons/discord.svg',
       iconType: 'custom',
       ariaLabel: 'Rejoignez notre Discord'
