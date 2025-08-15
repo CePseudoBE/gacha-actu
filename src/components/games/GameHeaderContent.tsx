@@ -1,11 +1,18 @@
 import Image from "next/image"
 import { TextShadow } from "@/components/ui/TextShadow"
 
+interface Platform {
+  id: string
+  name: string
+  slug: string
+  color?: string | null
+}
+
 interface GameData {
   name: string
   description: string
   genre: string
-  platform: string
+  platforms: Platform[]
   developer: string
   releaseDate: string
   logoUrl: string
@@ -59,8 +66,21 @@ export function GameHeaderContent({ game }: GameHeaderContentProps) {
                 </div>
                 <div>
                   <TextShadow intensity="light" color="black">
-                    <div className="text-xs sm:text-sm text-gray-200 font-medium">Plateforme</div>
-                    <div className="text-sm sm:text-base font-bold text-white">{game.platform}</div>
+                    <div className="text-xs sm:text-sm text-gray-200 font-medium">Plateformes</div>
+                    <div className="text-sm sm:text-base font-bold text-white">
+                      {game.platforms.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {game.platforms.map((platform, index) => (
+                            <span key={platform.id}>
+                              {platform.name}
+                              {index < game.platforms.length - 1 && <span className="text-gray-300">, </span>}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400">Non spécifiées</span>
+                      )}
+                    </div>
                   </TextShadow>
                 </div>
                 <div>

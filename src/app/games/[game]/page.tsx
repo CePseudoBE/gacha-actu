@@ -74,7 +74,7 @@ export default async function GamePage({ params }: GamePageProps) {
     "name": gameData.name,
     "description": gameData.description,
     "genre": gameData.genre,
-    "gamePlatform": gameData.platform,
+    "gamePlatform": gameData.platforms?.map(p => p.name).join(", ") || "",
     "publisher": {
       "@type": "Organization",
       "name": gameData.developer

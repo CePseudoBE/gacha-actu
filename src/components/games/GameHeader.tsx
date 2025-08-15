@@ -2,11 +2,18 @@ import Image from "next/image"
 import { ImageOverlay } from "@/components/ui/ImageOverlay"
 import { GameHeaderContent } from "./GameHeaderContent"
 
+interface Platform {
+  id: string
+  name: string
+  slug: string
+  color?: string | null
+}
+
 interface GameData {
   name: string
   description: string
   genre: string
-  platform: string
+  platforms: Platform[]
   developer: string
   releaseDate: string
   imageUrl: string

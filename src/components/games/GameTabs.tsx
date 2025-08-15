@@ -18,11 +18,18 @@ import {
 import { Article } from "@/types/article"
 import Link from "next/link"
 
+interface Platform {
+  id: string
+  name: string
+  slug: string
+  color?: string | null
+}
+
 interface GameData {
   name: string
   description: string
   genre: string
-  platform: string
+  platforms: Platform[]
   developer: string
   releaseDate: string
   imageUrl: string

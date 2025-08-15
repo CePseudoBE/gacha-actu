@@ -58,7 +58,6 @@ export async function GET(request: Request) {
       slug: game.slug,
       description: game.description,
       genre: game.genre,
-      platform: game.platform,
       developer: game.developer,
       releaseDate: game.releaseDate,
       imageUrl: game.imageUrl,

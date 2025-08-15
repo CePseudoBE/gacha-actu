@@ -67,24 +67,24 @@ model Article {
 }
 
 model Game {
-  id           String    @id @default(cuid())
-  name         String    @unique
-  slug         String    @unique
-  description  String
-  genre        String
-  platform     String
-  developer    String
-  releaseDate  String
-  imageUrl     String
-  logoUrl      String
-  isPopular    Boolean   @default(false)
-  officialSite String
-  wiki         String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           String         @id @default(cuid())
+  name         String         @unique
+  slug         String         @unique
+  description  String?
+  genre        String?
+  developer    String?
+  releaseDate  String?
+  imageUrl     String?
+  logoUrl      String?
+  isPopular    Boolean        @default(false)
+  officialSite String?
+  wiki         String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   articles     Article[]
   guides       Guide[]
   tags         GameTag[]
+  platforms    GamePlatform[]
 
   @@index([isPopular])
   @@index([genre])
@@ -236,5 +236,30 @@ model GuideSeoKeyword {
   @@index([guideId])
   @@index([keywordId])
   @@map("guide_seo_keywords")
+}
+
+model Platform {
+  id        String         @id @default(cuid())
+  name      String         @unique
+  slug      String         @unique
+  color     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  games     GamePlatform[]
+
+  @@map("platforms")
+}
+
+model GamePlatform {
+  gameId     String
+  platformId String
+  createdAt  DateTime @default(now())
+  game       Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  platform   Platform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@id([gameId, platformId])
+  @@index([gameId])
+  @@index([platformId])
+  @@map("game_platforms")
 }
 

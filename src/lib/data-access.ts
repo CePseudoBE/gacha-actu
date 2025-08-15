@@ -431,6 +431,18 @@ export const getGameBySlug = cache(
             guides: true,
           }
         },
+        platforms: {
+          include: {
+            platform: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                color: true,
+              }
+            }
+          }
+        },
         tags: {
           include: {
             tag: {
@@ -450,16 +462,16 @@ export const getGameBySlug = cache(
       id: game.id,
       name: game.name,
       slug: game.slug,
-      description: game.description,
-      genre: game.genre,
-      platform: game.platform,
-      developer: game.developer,
-      releaseDate: game.releaseDate,
-      imageUrl: game.imageUrl,
-      logoUrl: game.logoUrl,
+      description: game.description || "",
+      genre: game.genre || "",
+      platforms: game.platforms.map(gp => gp.platform),
+      developer: game.developer || "",
+      releaseDate: game.releaseDate || "",
+      imageUrl: game.imageUrl || "",
+      logoUrl: game.logoUrl || "",
       isPopular: game.isPopular,
-      officialSite: game.officialSite,
-      wiki: game.wiki,
+      officialSite: game.officialSite || "",
+      wiki: game.wiki || "",
       articlesCount: game._count.articles,
       guidesCount: game._count.guides,
       tags: game.tags.map(t => t.tag.name),
