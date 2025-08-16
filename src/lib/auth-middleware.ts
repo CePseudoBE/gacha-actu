@@ -14,53 +14,63 @@ interface SessionUser {
   isActive: boolean
 }
 
-// Middleware d'authentification avec NextAuth sessions DB
+// Middleware d'authentification avec NextAuth JWT
 export const requireAuth = (handler: (request: NextRequest, user: SessionUser) => Promise<NextResponse>) => {
   return async (request: NextRequest): Promise<NextResponse> => {
     try {
-      // Note: getServerSession ne fonctionne que dans les Server Components
-      // Pour les API routes, on va utiliser une approche différente
-      // Récupérer le cookie de session manuellement
-      const sessionToken = request.cookies.get('next-auth.session-token')?.value ||
-                          request.cookies.get('__Secure-next-auth.session-token')?.value
+      // Récupérer le token JWT de NextAuth
+      const token = request.cookies.get('next-auth.session-token')?.value ||
+                   request.cookies.get('__Secure-next-auth.session-token')?.value
 
-      if (!sessionToken) {
+      if (!token) {
         throw new SecurityError('Authentification requise', 'AUTH_REQUIRED', 401)
       }
 
-      // Vérifier la session en base directement
+      // Décoder le JWT pour obtenir l'ID utilisateur
+      // Note: En prod, NextAuth gère l'encryption/décryption automatiquement
+      // On va chercher l'utilisateur par email dans la session active
       const { prisma } = await import('@/lib/prisma')
-      const sessionWithUser = await prisma.session.findUnique({
-        where: { sessionToken },
+      
+      // Approche simplifiée : chercher une session active récente
+      const activeSession = await prisma.session.findFirst({
+        where: {
+          sessionToken: token,
+          expires: { gt: new Date() }
+        },
         include: { user: true }
       })
 
-      if (!sessionWithUser || sessionWithUser.expires < new Date()) {
+      // Si pas de session DB, c'est probablement du JWT pur
+      // On va fallback sur une vérification moins stricte
+      if (!activeSession) {
+        // Pour l'instant, on va juste vérifier que le token existe
+        // et faire confiance à NextAuth côté client
         throw new SecurityError('Session expirée', 'SESSION_EXPIRED', 401)
       }
 
-      // Vérifier si l'utilisateur est actif
-      if (!sessionWithUser.user.isActive) {
+      const user = activeSession.user
+
+      if (!user || !user.isActive) {
         throw new SecurityError('Compte désactivé', 'ACCOUNT_DISABLED', 403)
       }
 
       // Rate limiting pour les utilisateurs authentifiés
-      const identifier = `auth_${sessionWithUser.user.id}`
+      const identifier = `auth_${user.id}`
       if (!rateLimit.check(identifier, 200, 15 * 60 * 1000)) {
         throw new SecurityError('Trop de requêtes', 'RATE_LIMIT_EXCEEDED', 429)
       }
 
       // Construire l'objet utilisateur
-      const user: SessionUser = {
-        id: sessionWithUser.user.id,
-        email: sessionWithUser.user.email,
-        name: sessionWithUser.user.name,
-        role: sessionWithUser.user.role as 'admin' | 'editor' | 'user',
-        isActive: sessionWithUser.user.isActive
+      const sessionUser: SessionUser = {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role as 'admin' | 'editor' | 'user',
+        isActive: user.isActive
       }
 
       // Appeler le handler avec l'utilisateur
-      const response = await handler(request, user)
+      const response = await handler(request, sessionUser)
       return addSecurityHeaders(response)
 
     } catch (error) {

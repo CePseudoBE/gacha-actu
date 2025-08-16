@@ -102,7 +102,6 @@ export class MaintenanceService {
       '/maintenance',
       '/api/admin/maintenance',
       '/auth/login',
-      '/admin/login',
       '/_next',
       '/favicon.ico',
       '/api/auth'

@@ -79,11 +79,11 @@ export default function MaintenancePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-black to-[#051202] p-4">
       <Card className="w-full max-w-md text-center">
         <CardHeader className="pb-4">
-          <div className="mx-auto w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-            <Wrench className="w-8 h-8 text-orange-600" />
+          <div className="mx-auto w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full flex items-center justify-center mb-4">
+            <Wrench className="w-8 h-8 text-black" />
           </div>
           <CardTitle className="text-2xl font-bold text-slate-800">
             Site en maintenance

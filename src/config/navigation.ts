@@ -57,10 +57,10 @@ export const navigationConfig: NavigationConfig = {
       }
     },
     {
-      id: 'events',
-      label: 'Événements',
-      href: '/evenements',
-      icon: 'Calendar'
+      id: 'guides',
+      label: 'Guides',
+      href: '/guides',
+      icon: 'BookOpen'
     },
     {
       id: 'tier-lists',

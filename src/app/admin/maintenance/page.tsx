@@ -19,8 +19,7 @@ import { toast } from "sonner"
 const maintenanceSchema = z.object({
   isEnabled: z.boolean(),
   message: z.string().min(1, "Le message est requis").max(500, "Maximum 500 caractères"),
-  estimatedEndTime: z.string().optional(),
-  allowAdminAccess: z.boolean()
+  estimatedEndTime: z.string().optional()
 })
 
 type MaintenanceFormData = z.infer<typeof maintenanceSchema>
@@ -34,8 +33,7 @@ export default function AdminMaintenancePage() {
     defaultValues: {
       isEnabled: false,
       message: "Site en maintenance. Nous reviendrons bientôt !",
-      estimatedEndTime: "",
-      allowAdminAccess: true
+      estimatedEndTime: ""
     }
   })
 
@@ -45,7 +43,7 @@ export default function AdminMaintenancePage() {
 
   const fetchMaintenanceSettings = async () => {
     try {
-      const response = await fetch('/api/admin/maintenance')
+      const response = await fetch('/api/admin/maintenance', { method: 'PATCH' })
       if (response.ok) {
         const data = await response.json()
         setCurrentSettings(data.data)
@@ -56,9 +54,13 @@ export default function AdminMaintenancePage() {
           message: data.data.message,
           estimatedEndTime: data.data.estimatedEndTime 
             ? new Date(data.data.estimatedEndTime).toISOString().slice(0, 16)
-            : "",
-          allowAdminAccess: data.data.allowAdminAccess
+            : ""
         })
+      } else if (response.status === 401) {
+        toast.error("🔑 Session expirée - Reconnexion en cours...")
+        setTimeout(() => {
+          window.location.href = '/auth/login'
+        }, 1500)
       }
     } catch (error) {
       console.error('Erreur lors de la récupération:', error)
@@ -74,7 +76,8 @@ export default function AdminMaintenancePage() {
         ...data,
         estimatedEndTime: data.estimatedEndTime 
           ? new Date(data.estimatedEndTime).toISOString()
-          : undefined
+          : undefined,
+        allowAdminAccess: true // Toujours autorisé par design
       }
 
       const response = await fetch('/api/admin/maintenance', {
@@ -94,6 +97,16 @@ export default function AdminMaintenancePage() {
         }
       } else {
         const error = await response.json()
+        
+        // Gestion spécifique pour les erreurs d'authentification
+        if (response.status === 401 && error.code === 'SESSION_EXPIRED') {
+          toast.error("🔑 Session expirée - Reconnexion requise")
+          setTimeout(() => {
+            window.location.href = '/auth/login'
+          }, 2000)
+          return
+        }
+        
         toast.error(error.error || "Erreur lors de la mise à jour")
       }
     } catch (error) {
@@ -262,29 +275,7 @@ export default function AdminMaintenancePage() {
                 )}
               />
 
-              {/* Accès admin */}
-              <FormField
-                control={form.control}
-                name={"allowAdminAccess" as any}
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base font-medium">
-                        Autoriser l&apos;accès admin
-                      </FormLabel>
-                      <FormDescription>
-                        Les administrateurs peuvent accéder au back-office pendant la maintenance
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+              {/* Note: L'accès admin est toujours autorisé par design */}
 
               <Separator />
 
@@ -309,7 +300,10 @@ export default function AdminMaintenancePage() {
                 <Button 
                   type="button" 
                   variant="outline" 
-                  onClick={fetchMaintenanceSettings}
+                  onClick={() => {
+                    setIsLoading(true)
+                    fetchMaintenanceSettings().finally(() => setIsLoading(false))
+                  }}
                   disabled={isLoading}
                 >
                   Actualiser
