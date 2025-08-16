@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateGames } from '@/lib/data-access'
+import { createGameApiSchema } from '@/lib/validations'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validation des données requises
-    if (!body.name || !body.slug) {
+    // Validation avec Zod
+    const validationResult = createGameApiSchema.safeParse(body)
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Le nom et le slug sont requis' },
+        { 
+          error: 'Données invalides', 
+          details: validationResult.error.flatten().fieldErrors 
+        },
         { status: 400 }
       )
     }
+    
+    const validatedData = validationResult.data
 
     // Vérifier si le slug existe déjà
     const existingGame = await prisma.game.findUnique({
-      where: { slug: body.slug }
+      where: { slug: validatedData.slug }
     })
 
     if (existingGame) {
@@ -31,23 +38,23 @@ export async function POST(request: NextRequest) {
       // Créer le jeu
       const createdGame = await tx.game.create({
         data: {
-          name: body.name,
-          slug: body.slug,
-          description: body.description || null,
-          genre: body.genre || null,
-          developer: body.developer || null,
-          releaseDate: body.releaseDate || null,
-          imageUrl: body.imageUrl || null,
-          logoUrl: body.logoUrl || null,
-          officialSite: body.officialSite || null,
-          wiki: body.wiki || null,
-          isPopular: body.isPopular || false,
+          name: validatedData.name,
+          slug: validatedData.slug,
+          description: validatedData.description || null,
+          genre: validatedData.genre || null,
+          developer: validatedData.developer || null,
+          releaseDate: validatedData.releaseDate || null,
+          imageUrl: validatedData.imageUrl || null,
+          logoUrl: validatedData.logoUrl || null,
+          officialSite: validatedData.officialSite || null,
+          wiki: validatedData.wiki || null,
+          isPopular: validatedData.isPopular || false,
         }
       })
 
       // Ajouter les plateformes
-      if (body.platformIds && body.platformIds.length > 0) {
-        for (const platformId of body.platformIds) {
+      if (validatedData.platformIds && validatedData.platformIds.length > 0) {
+        for (const platformId of validatedData.platformIds) {
           await tx.gamePlatform.create({
             data: {
               gameId: createdGame.id,

@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   try {
     const skip = (page - 1) * limit
 
-    const where: any = {}
+    const where: { isPopular?: boolean; genre?: string } = {}
     
     if (popular === 'true') {
       where.isPopular = true

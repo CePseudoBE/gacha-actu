@@ -193,7 +193,24 @@ async function main() {
     createdTags[tagName] = tag
   }
 
-  // 5. Créer des articles
+  // 5. Créer des mots-clés SEO
+  console.log('📝 Creating SEO keywords...')
+  const seoKeywords = [
+    'genshin impact', 'honkai star rail', 'fire emblem heroes', 'arknights', 'blue archive', 'epic seven',
+    'gacha game', 'mobile game', 'rpg', 'tier list', 'guide', 'build', 'strategy', 'event',
+    'character', 'weapon', 'banner', 'summon', 'meta', 'team comp', 'f2p', 'free to play',
+    'mihoyo', 'hoyoverse', 'nintendo', 'turn based', 'tower defense', 'anime game'
+  ]
+  
+  for (const keyword of seoKeywords) {
+    await prisma.seoKeyword.upsert({
+      where: { keyword },
+      update: {},
+      create: { keyword }
+    })
+  }
+
+  // 6. Créer des articles
   console.log('📝 Creating articles...')
   const articles = [
     {
@@ -290,6 +307,7 @@ async function main() {
       update: {},
       create: {
         ...data,
+        category: data.category as any,
         gameId: game.id,
         publishedAt: new Date()
       }
@@ -321,6 +339,7 @@ async function main() {
   console.log(`   - ${platforms.length} platforms`)
   console.log(`   - 6 games with platform associations`)
   console.log(`   - ${tagNames.length} tags`)
+  console.log(`   - ${seoKeywords.length} SEO keywords`)
   console.log(`   - ${articles.length} articles with tags`)
 }
 

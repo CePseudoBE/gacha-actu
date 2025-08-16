@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { GameCard } from "./GameCard"
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
@@ -49,7 +49,7 @@ export function GameGrid() {
   const genre = searchParams.get('genre')
   const popular = searchParams.get('popular')
 
-  const fetchGames = async (page: number = 1, append: boolean = false) => {
+  const fetchGames = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
       if (!append) setLoading(true)
       else setLoadingMore(true)
@@ -85,12 +85,12 @@ export function GameGrid() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [genre, popular])
 
   // Recharger lors des changements de filtres
   useEffect(() => {
     fetchGames(1, false)
-  }, [genre, popular])
+  }, [fetchGames])
 
   const handleLoadMore = () => {
     if (pagination?.hasNextPage) {

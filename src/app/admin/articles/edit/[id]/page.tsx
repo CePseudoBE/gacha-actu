@@ -30,7 +30,7 @@ export default function EditArticlePage() {
   
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingData, setIsLoadingData] = useState(true)
-  const [games, setGames] = useState<any[]>([])
+  const [games, setGames] = useState<{id: string, name: string}[]>([])
   const [availableTags, setAvailableTags] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -75,8 +75,8 @@ export default function EditArticlePage() {
             metaDescription: article.metaDescription || "",
             isPopular: article.isPopular || false,
             publishedAt: article.publishedAt ? article.publishedAt.split('T')[0] : "",
-            tags: article.tags?.map((t: any) => t.tag.name) || [],
-            seoKeywords: article.seoKeywords?.map((k: any) => k.keyword.keyword) || []
+            tags: article.tags?.map((t: {tag: {name: string}}) => t.tag.name) || [],
+            seoKeywords: article.seoKeywords?.map((k: {keyword: {keyword: string}}) => k.keyword.keyword) || []
           })
         } else {
           setError("Article non trouvé")
@@ -89,7 +89,7 @@ export default function EditArticlePage() {
         
         if (tagsResponse.ok) {
           const tagsData = await tagsResponse.json()
-          setAvailableTags(tagsData.map((tag: any) => tag.name))
+          setAvailableTags(tagsData.map((tag: {name: string}) => tag.name))
         }
       } catch (error) {
         console.error('Erreur lors du chargement des données:', error)
@@ -158,7 +158,7 @@ export default function EditArticlePage() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="flex items-center justify-center h-32">
           <Loader2 className="w-8 h-8 animate-spin" />
-          <span className="ml-2">Chargement de l'article...</span>
+          <span className="ml-2">Chargement de l&apos;article...</span>
         </div>
       </div>
     )
@@ -174,8 +174,8 @@ export default function EditArticlePage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Modifier l'article</h1>
-          <p className="text-muted-foreground">Modifier les informations de l'article</p>
+          <h1 className="text-3xl font-bold">Modifier l&apos;article</h1>
+          <p className="text-muted-foreground">Modifier les informations de l&apos;article</p>
         </div>
       </div>
 
@@ -183,7 +183,7 @@ export default function EditArticlePage() {
         {/* Formulaire principal */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Contenu de l'article</CardTitle>
+            <CardTitle>Contenu de l&apos;article</CardTitle>
             <CardDescription>
               Informations principales et contenu
             </CardDescription>
@@ -198,7 +198,7 @@ export default function EditArticlePage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Titre */}
               <div className="space-y-2">
-                <Label htmlFor="title">Titre de l'article *</Label>
+                <Label htmlFor="title">Titre de l&apos;article *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -234,7 +234,7 @@ export default function EditArticlePage() {
 
               {/* Contenu */}
               <div className="space-y-2">
-                <Label htmlFor="content">Contenu de l'article *</Label>
+                <Label htmlFor="content">Contenu de l&apos;article *</Label>
                 <Textarea
                   id="content"
                   value={formData.content}
@@ -366,7 +366,7 @@ export default function EditArticlePage() {
               value={formData.imageUrl}
               onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
               placeholder="https://example.com/article.jpg"
-              description="Image d'illustration de l'article (recommandé: 16:9)"
+              description="Image d&apos;illustration de l&apos;article (recommandé: 16:9)"
               aspectRatio="aspect-video"
             />
 

@@ -1,22 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateAll } from '@/lib/data-access'
+import { createGuideApiSchema } from '@/lib/validations'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validation des données requises
-    if (!body.title || !body.slug || !body.summary || !body.content || !body.author || !body.gameId) {
+    // Validation avec Zod
+    const validationResult = createGuideApiSchema.safeParse(body)
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Tous les champs marqués * sont requis' },
+        { 
+          error: 'Données invalides', 
+          details: validationResult.error.flatten().fieldErrors 
+        },
         { status: 400 }
       )
     }
+    
+    const validatedData = validationResult.data
 
     // Vérifier si le slug existe déjà
     const existingGuide = await prisma.guide.findUnique({
-      where: { slug: body.slug }
+      where: { slug: validatedData.slug }
     })
 
     if (existingGuide) {
@@ -29,18 +36,18 @@ export async function POST(request: NextRequest) {
     // Créer le guide
     const guide = await prisma.guide.create({
       data: {
-        title: body.title,
-        slug: body.slug,
-        summary: body.summary,
-        content: body.content,
-        author: body.author,
-        gameId: body.gameId,
-        guideType: body.guideType || 'GENERAL',
-        difficulty: body.difficulty || 'BEGINNER',
-        imageUrl: body.imageUrl || null,
-        readingTime: body.readingTime || null,
-        metaDescription: body.metaDescription || null,
-        isPopular: body.isPopular || false,
+        title: validatedData.title,
+        slug: validatedData.slug,
+        summary: validatedData.summary,
+        content: validatedData.content,
+        author: validatedData.author,
+        gameId: validatedData.gameId,
+        guideType: validatedData.guideType || 'STRATEGY',
+        difficulty: validatedData.difficulty || 'BEGINNER',
+        imageUrl: validatedData.imageUrl || null,
+        readingTime: validatedData.readingTime || null,
+        metaDescription: validatedData.metaDescription || null,
+        isPopular: validatedData.isPopular || false,
         publishedAt: new Date(),
       },
       include: {

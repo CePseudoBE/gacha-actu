@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Search, Plus, Edit, Trash2 } from "lucide-react"
+import { Search, Edit, Trash2 } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
 export default async function AdminTagsPage() {
@@ -99,7 +99,7 @@ export default async function AdminTagsPage() {
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">Aucun tag trouvé</p>
           <p className="text-sm text-muted-foreground">
-            Les tags sont créés automatiquement lors de la création d'articles ou de guides
+            Les tags sont créés automatiquement lors de la création d&apos;articles ou de guides
           </p>
         </div>
       )}

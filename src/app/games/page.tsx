@@ -2,7 +2,6 @@ import { Metadata } from "next"
 import { Suspense } from "react"
 import { GameGrid } from "@/components/games/GameGrid"
 import { GameFilters } from "@/components/games/GameFilters"
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
 import { JsonLdScript } from "@/components/seo/JsonLdScript"
 
 export const metadata: Metadata = {

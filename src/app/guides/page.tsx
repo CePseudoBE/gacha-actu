@@ -2,7 +2,6 @@ import { Metadata } from "next"
 import { Suspense } from "react"
 import { GuideGrid } from "@/components/guides/GuideGrid"
 import { GuideFilters } from "@/components/guides/GuideFilters"
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
 import { JsonLdScript } from "@/components/seo/JsonLdScript"
 
 export const metadata: Metadata = {

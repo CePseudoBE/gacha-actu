@@ -12,8 +12,7 @@ import {
   Trophy,
   ExternalLink,
   Clock,
-  TrendingUp,
-  Calculator
+  TrendingUp
 } from "lucide-react"
 import { Article } from "@/types/article"
 import Link from "next/link"

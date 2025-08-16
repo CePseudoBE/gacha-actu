@@ -97,12 +97,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6 break-words overflow-wrap-anywhere">
             {article.title}
           </h1>
 
           {/* Summary */}
-          <p className="text-xl text-muted-foreground leading-relaxed mb-6">
+          <p className="text-xl text-muted-foreground leading-relaxed mb-6 break-words overflow-wrap-anywhere">
             {article.summary}
           </p>
 
@@ -153,7 +153,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         </header>
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none mb-12 prose-gray dark:prose-invert leading-relaxed">
+        <div className="prose prose-lg max-w-none mb-12 prose-gray dark:prose-invert leading-relaxed break-words overflow-wrap-anywhere">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
             rehypePlugins={[rehypeHighlight, rehypeRaw]}

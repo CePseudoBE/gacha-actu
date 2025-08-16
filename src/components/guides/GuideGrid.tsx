@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { GuideCard } from "./GuideCard"
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner"
@@ -51,7 +51,7 @@ export function GuideGrid() {
   const difficulty = searchParams.get('difficulty')
   const popular = searchParams.get('popular')
 
-  const fetchGuides = async (page: number = 1, append: boolean = false) => {
+  const fetchGuides = useCallback(async (page: number = 1, append: boolean = false) => {
     try {
       if (!append) setLoading(true)
       else setLoadingMore(true)
@@ -89,12 +89,12 @@ export function GuideGrid() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [gameId, guideType, difficulty, popular])
 
   // Recharger lors des changements de filtres
   useEffect(() => {
     fetchGuides(1, false)
-  }, [gameId, guideType, difficulty, popular])
+  }, [fetchGuides])
 
   const handleLoadMore = () => {
     if (pagination?.hasNextPage) {

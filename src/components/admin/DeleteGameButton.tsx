@@ -82,7 +82,7 @@ export function DeleteGameButton({ gameId, gameName, hasContent }: DeleteGameBut
         <AlertDialogHeader>
           <AlertDialogTitle>Supprimer le jeu</AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer le jeu <strong>"{gameName}"</strong> ?
+            Êtes-vous sûr de vouloir supprimer le jeu <strong>&quot;{gameName}&quot;</strong> ?
             Cette action est irréversible.
           </AlertDialogDescription>
         </AlertDialogHeader>

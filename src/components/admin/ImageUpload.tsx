@@ -120,7 +120,7 @@ export function ImageUpload({
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <ExternalLink className="w-3 h-3" />
               <a href={value} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                Voir l'image
+                Voir l&apos;image
               </a>
             </div>
           )}

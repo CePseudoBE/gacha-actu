@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { GamepadIcon, BookOpenIcon, NewspaperIcon, BarChart3Icon, TrendingUpIcon, UsersIcon } from "lucide-react"
+import { GamepadIcon, BookOpenIcon, NewspaperIcon, BarChart3Icon, TrendingUpIcon } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
 export default async function AdminDashboard() {
@@ -39,7 +39,7 @@ export default async function AdminDashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground">Vue d'ensemble de votre site d'actualités Gacha</p>
+        <p className="text-muted-foreground">Vue d&apos;ensemble de votre site d&apos;actualités Gacha</p>
       </div>
 
       {/* Statistiques en header */}

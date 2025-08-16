@@ -1,78 +1,80 @@
 "use client"
 
-import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-import { ArrowLeft, Save, Upload } from "lucide-react"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { ArrowLeft, Save } from "lucide-react"
 import { ImageUpload } from "@/components/admin/ImageUpload"
 import { PlatformSelector } from "@/components/admin/PlatformSelector"
+import { gameFormSchema, type GameFormData } from "@/lib/validations"
 
 const genres = [
-  "RPG", "Action RPG", "Collectible Card Game", "Strategy", "MMORPG", "Idle Game", "Puzzle", "Autre"
-]
-
+  "RPG", 
+  "Action RPG", 
+  "Collectible Card Game", 
+  "Strategy", 
+  "MMORPG", 
+  "Idle Game", 
+  "Puzzle", 
+  "Tower Defense",
+  "Turn-based RPG",
+  "Tactical RPG",
+  "Autre"
+] as const
 
 export default function AddGamePage() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    genre: "",
-    platformIds: [] as string[],
-    developer: "",
-    releaseDate: "",
-    imageUrl: "",
-    logoUrl: "",
-    officialSite: "",
-    wiki: "",
-    isPopular: false
+
+  // Configuration React Hook Form avec Zod
+  const form = useForm<GameFormData>({
+    resolver: zodResolver(gameFormSchema),
+    defaultValues: {
+      name: "",
+      slug: "",
+      description: "",
+      genre: "",
+      developer: "",
+      releaseDate: "",
+      imageUrl: "",
+      logoUrl: "",
+      officialSite: "",
+      wiki: "",
+      isPopular: false,
+      platformIds: []
+    }
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setIsLoading(true)
-
-    // Validation basique
-    if (!formData.name.trim()) {
-      setError("Le nom du jeu est requis")
-      setIsLoading(false)
-      return
-    }
-
+  // Soumission du formulaire
+  const onSubmit = async (data: GameFormData) => {
     try {
       const response = await fetch('/api/admin/games', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       })
 
       if (response.ok) {
         router.push('/admin/games')
       } else {
         const errorData = await response.json()
-        setError(errorData.error || 'Erreur lors de la création du jeu')
+        console.error('Erreur lors de la création du jeu:', errorData.error)
       }
     } catch (error) {
       console.error('Erreur:', error)
-      setError('Erreur de connexion au serveur')
-    } finally {
-      setIsLoading(false)
     }
   }
 
+  // Génération automatique du slug
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
@@ -83,11 +85,8 @@ export default function AddGamePage() {
   }
 
   const handleNameChange = (value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      name: value,
-      slug: generateSlug(value)
-    }))
+    form.setValue('name', value)
+    form.setValue('slug', generateSlug(value))
   }
 
   return (
@@ -113,173 +112,269 @@ export default function AddGamePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-              <div className="flex items-center gap-2 text-red-800">
-                <Upload className="w-4 h-4" />
-                <p className="text-sm font-medium">{error}</p>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Nom du jeu */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom du jeu *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="ex: Genshin Impact"
+                        {...field}
+                        onChange={(e) => handleNameChange(e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Slug */}
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug (URL)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="genshin-impact"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Généré automatiquement à partir du nom
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Description du jeu..."
+                        rows={3}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Genre et Plateformes */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="genre"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Genre</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Sélectionner un genre" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {genres.map((genre) => (
+                            <SelectItem key={genre} value={genre}>
+                              {genre}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="platformIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Plateformes supportées</FormLabel>
+                      <FormControl>
+                        <PlatformSelector
+                          value={field.value}
+                          onChange={field.onChange}
+                          label=""
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Nom du jeu */}
-            <div className="space-y-2">
-              <Label htmlFor="name">Nom du jeu *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="ex: Genshin Impact"
-                required
-              />
-            </div>
 
-            {/* Slug */}
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug (URL)</Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                placeholder="genshin-impact"
-              />
-              <p className="text-xs text-muted-foreground">
-                Généré automatiquement à partir du nom
-              </p>
-            </div>
+              {/* Développeur et Date de sortie */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="developer"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Développeur</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="ex: miHoYo"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Description du jeu..."
-                rows={3}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="releaseDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date de sortie</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-            {/* Genre et Plateforme */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="genre">Genre</Label>
-                <Select
-                  value={formData.genre}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, genre: value }))}
+              {/* Images */}
+              <div className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="imageUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Image de couverture</FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          label=""
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="https://example.com/cover.jpg"
+                          description="Image principale du jeu (recommandé: 400x600px)"
+                          aspectRatio="aspect-[2/3]"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="logoUrl"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Logo du jeu</FormLabel>
+                      <FormControl>
+                        <ImageUpload
+                          label=""
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="https://example.com/logo.png"
+                          description="Logo/icône du jeu (recommandé: format carré)"
+                          aspectRatio="aspect-square"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* URLs externes */}
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="officialSite"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Site officiel</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://genshin.hoyoverse.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="wiki"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Wiki</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="https://wiki.example.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Populaire */}
+              <FormField
+                control={form.control}
+                name="isPopular"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Jeu populaire</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* Boutons */}
+              <div className="flex gap-4 pt-6">
+                <Button 
+                  type="submit" 
+                  disabled={form.formState.isSubmitting} 
+                  className="flex-1"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un genre" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {genres.map((genre) => (
-                      <SelectItem key={genre} value={genre}>
-                        {genre}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <PlatformSelector
-                value={formData.platformIds}
-                onChange={(platformIds) => setFormData(prev => ({ ...prev, platformIds }))}
-                label="Plateformes supportées"
-              />
-            </div>
-
-            {/* Développeur et Date de sortie */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="developer">Développeur</Label>
-                <Input
-                  id="developer"
-                  value={formData.developer}
-                  onChange={(e) => setFormData(prev => ({ ...prev, developer: e.target.value }))}
-                  placeholder="ex: miHoYo"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="releaseDate">Date de sortie</Label>
-                <Input
-                  id="releaseDate"
-                  type="date"
-                  value={formData.releaseDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, releaseDate: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            {/* Images */}
-            <div className="space-y-6">
-              <ImageUpload
-                label="Image de couverture"
-                value={formData.imageUrl}
-                onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
-                placeholder="https://example.com/cover.jpg"
-                description="Image principale du jeu (recommandé: 400x600px)"
-                aspectRatio="aspect-[2/3]"
-              />
-
-              <ImageUpload
-                label="Logo du jeu"
-                value={formData.logoUrl}
-                onChange={(url) => setFormData(prev => ({ ...prev, logoUrl: url }))}
-                placeholder="https://example.com/logo.png"
-                description="Logo/icône du jeu (recommandé: format carré)"
-                aspectRatio="aspect-square"
-              />
-            </div>
-
-            {/* URLs externes */}
-            <div className="space-y-4">
-
-              <div className="space-y-2">
-                <Label htmlFor="officialSite">Site officiel</Label>
-                <Input
-                  id="officialSite"
-                  value={formData.officialSite}
-                  onChange={(e) => setFormData(prev => ({ ...prev, officialSite: e.target.value }))}
-                  placeholder="https://genshin.hoyoverse.com"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="wiki">Wiki</Label>
-                <Input
-                  id="wiki"
-                  value={formData.wiki}
-                  onChange={(e) => setFormData(prev => ({ ...prev, wiki: e.target.value }))}
-                  placeholder="https://wiki.example.com"
-                />
-              </div>
-            </div>
-
-            {/* Populaire */}
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isPopular"
-                checked={formData.isPopular}
-                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPopular: checked }))}
-              />
-              <Label htmlFor="isPopular">Jeu populaire</Label>
-            </div>
-
-            {/* Boutons */}
-            <div className="flex gap-4 pt-6">
-              <Button type="submit" disabled={isLoading} className="flex-1">
-                <Save className="w-4 h-4 mr-2" />
-                {isLoading ? "Création..." : "Créer le jeu"}
-              </Button>
-              <Link href="/admin/games">
-                <Button type="button" variant="outline">
-                  Annuler
+                  <Save className="w-4 h-4 mr-2" />
+                  {form.formState.isSubmitting ? "Création..." : "Créer le jeu"}
                 </Button>
-              </Link>
-            </div>
-          </form>
+                <Link href="/admin/games">
+                  <Button type="button" variant="outline">
+                    Annuler
+                  </Button>
+                </Link>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

@@ -158,3 +158,37 @@
 
 /* Syntax highlighting styles */
 @import 'highlight.js/styles/github-dark.css';
+
+/* Fix text overflow in prose content */
+@layer components {
+  .prose {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+  
+  .prose p,
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4,
+  .prose h5,
+  .prose h6,
+  .prose blockquote,
+  .prose pre,
+  .prose code {
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+  
+  /* Ensure pre and code blocks scroll instead of overflowing */
+  .prose pre {
+    overflow-x: auto;
+    word-wrap: normal;
+    overflow-wrap: normal;
+  }
+  
+  .prose code {
+    white-space: pre-wrap;
+  }
+}

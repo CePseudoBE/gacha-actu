@@ -64,7 +64,7 @@ export default function ImageHelpPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="w-5 h-5" />
-              Méthodes d'ajout d'images
+              Méthodes d&apos;ajout d&apos;images
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -75,7 +75,7 @@ export default function ImageHelpPage() {
                   <h3 className="font-semibold">Par URL</h3>
                 </div>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Collez l'URL d'une image hébergée en ligne
+                  Collez l&apos;URL d&apos;une image hébergée en ligne
                 </p>
                 <Badge variant="secondary">Recommandé</Badge>
               </div>
@@ -129,7 +129,7 @@ export default function ImageHelpPage() {
         {/* Domaines supportés */}
         <Card>
           <CardHeader>
-            <CardTitle>Domaines d'images supportés</CardTitle>
+            <CardTitle>Domaines d&apos;images supportés</CardTitle>
             <CardDescription>
               Liste des sites dont vous pouvez utiliser les images directement
             </CardDescription>
@@ -168,7 +168,7 @@ export default function ImageHelpPage() {
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <p className="font-medium">Respectez les ratios</p>
-                  <p className="text-sm text-muted-foreground">Les bonnes proportions améliorent l'affichage sur le site</p>
+                  <p className="text-sm text-muted-foreground">Les bonnes proportions améliorent l&apos;affichage sur le site</p>
                 </div>
               </div>
               
@@ -184,7 +184,7 @@ export default function ImageHelpPage() {
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <p className="font-medium">Vérifiez les droits</p>
-                  <p className="text-sm text-muted-foreground">Assurez-vous d'avoir le droit d'utiliser les images</p>
+                  <p className="text-sm text-muted-foreground">Assurez-vous d&apos;avoir le droit d&apos;utiliser les images</p>
                 </div>
               </div>
             </div>
@@ -194,7 +194,7 @@ export default function ImageHelpPage() {
         {/* Sources recommandées */}
         <Card>
           <CardHeader>
-            <CardTitle>Sources d'images recommandées</CardTitle>
+            <CardTitle>Sources d&apos;images recommandées</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
