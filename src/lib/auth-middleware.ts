@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
 import { 
   addSecurityHeaders,
   SecurityError,
@@ -20,6 +19,7 @@ export const requireAuth = (handler: (request: NextRequest, user: SessionUser) =
   return async (request: NextRequest): Promise<NextResponse> => {
     try {
       // Décoder le JWT de NextAuth
+      const { getToken } = require('next-auth/jwt')
       const token = await getToken({ 
         req: request, 
         secret: process.env.NEXTAUTH_SECRET 
