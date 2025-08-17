@@ -2,6 +2,7 @@
  * Hook pour la gestion des mots-clés SEO - Responsabilité unique
  */
 
+import { useMemo } from 'react'
 import { useApiData } from './useApiData'
 
 interface SeoKeyword {
@@ -9,8 +10,13 @@ interface SeoKeyword {
 }
 
 export function useSeoKeywords() {
-  return useApiData<string[]>({
-    url: '/api/admin/seo-keywords',
-    transformer: (data) => (data as SeoKeyword[])?.map(item => item.keyword) || []
+  const { data: rawData, isLoading, error, refetch } = useApiData<SeoKeyword[]>({
+    url: '/api/admin/seo-keywords'
   })
+  
+  const data = useMemo(() => {
+    return (rawData as SeoKeyword[])?.map(item => item.keyword) || []
+  }, [rawData])
+  
+  return { data, isLoading, error, refetch }
 }

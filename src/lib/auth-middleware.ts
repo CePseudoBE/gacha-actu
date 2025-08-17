@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 import { 
   addSecurityHeaders,
   SecurityError,
@@ -18,37 +19,26 @@ interface SessionUser {
 export const requireAuth = (handler: (request: NextRequest, user: SessionUser) => Promise<NextResponse>) => {
   return async (request: NextRequest): Promise<NextResponse> => {
     try {
-      // Récupérer le token JWT de NextAuth
-      const token = request.cookies.get('next-auth.session-token')?.value ||
-                   request.cookies.get('__Secure-next-auth.session-token')?.value
+      // Décoder le JWT de NextAuth
+      const token = await getToken({ 
+        req: request, 
+        secret: process.env.NEXTAUTH_SECRET 
+      })
 
       if (!token) {
         throw new SecurityError('Authentification requise', 'AUTH_REQUIRED', 401)
       }
 
-      // Décoder le JWT pour obtenir l'ID utilisateur
-      // Note: En prod, NextAuth gère l'encryption/décryption automatiquement
-      // On va chercher l'utilisateur par email dans la session active
-      const { prisma } = await import('@/lib/prisma')
-      
-      // Approche simplifiée : chercher une session active récente
-      const activeSession = await prisma.session.findFirst({
-        where: {
-          sessionToken: token,
-          expires: { gt: new Date() }
-        },
-        include: { user: true }
-      })
-
-      // Si pas de session DB, c'est probablement du JWT pur
-      // On va fallback sur une vérification moins stricte
-      if (!activeSession) {
-        // Pour l'instant, on va juste vérifier que le token existe
-        // et faire confiance à NextAuth côté client
+      // Vérifier que le token n'est pas expiré
+      if (token.exp && Date.now() >= token.exp * 1000) {
         throw new SecurityError('Session expirée', 'SESSION_EXPIRED', 401)
       }
 
-      const user = activeSession.user
+      // Récupérer l'utilisateur depuis la DB pour vérifications additionnelles
+      const { prisma } = await import('@/lib/prisma')
+      const user = await prisma.user.findUnique({
+        where: { id: token.sub }
+      })
 
       if (!user || !user.isActive) {
         throw new SecurityError('Compte désactivé', 'ACCOUNT_DISABLED', 403)
@@ -64,7 +54,7 @@ export const requireAuth = (handler: (request: NextRequest, user: SessionUser) =
       const sessionUser: SessionUser = {
         id: user.id,
         email: user.email,
-        name: user.name,
+        name: user.name || '',
         role: user.role as 'admin' | 'editor' | 'user',
         isActive: user.isActive
       }

@@ -2,6 +2,7 @@
  * Hook pour la gestion des jeux - Responsabilité unique
  */
 
+import { useMemo } from 'react'
 import { useApiData } from './useApiData'
 
 export interface Game {
@@ -10,8 +11,13 @@ export interface Game {
 }
 
 export function useGames() {
-  return useApiData<Game[]>({
-    url: '/api/admin/games',
-    transformer: (data) => (data as Game[]) || []
+  const { data: rawData, isLoading, error, refetch } = useApiData<Game[]>({
+    url: '/api/admin/games'
   })
+  
+  const data = useMemo(() => {
+    return (rawData as Game[]) || []
+  }, [rawData])
+  
+  return { data, isLoading, error, refetch }
 }

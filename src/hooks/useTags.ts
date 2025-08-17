@@ -2,6 +2,7 @@
  * Hook pour la gestion des tags - Responsabilité unique
  */
 
+import { useMemo } from 'react'
 import { useApiData } from './useApiData'
 
 interface Tag {
@@ -9,8 +10,13 @@ interface Tag {
 }
 
 export function useTags() {
-  return useApiData<string[]>({
-    url: '/api/admin/tags',
-    transformer: (data) => (data as Tag[])?.map(tag => tag.name) || []
+  const { data: rawData, isLoading, error, refetch } = useApiData<Tag[]>({
+    url: '/api/admin/tags'
   })
+  
+  const data = useMemo(() => {
+    return (rawData as Tag[])?.map(tag => tag.name) || []
+  }, [rawData])
+  
+  return { data, isLoading, error, refetch }
 }

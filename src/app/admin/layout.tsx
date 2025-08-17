@@ -30,7 +30,7 @@ export default function AdminLayout({
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-6">
-                <Link href="/admin" className="flex items-center gap-2">
+                <Link href="/admin" className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
                   <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                     <span className="text-primary-foreground font-bold text-sm">GA</span>
                   </div>
@@ -39,31 +39,31 @@ export default function AdminLayout({
 
                 <nav className="hidden md:flex items-center gap-4">
                   <Link href="/admin">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
                       <HomeIcon className="w-4 h-4" />
                       Dashboard
                     </Button>
                   </Link>
                   <Link href="/admin/games">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
                       <GamepadIcon className="w-4 h-4" />
                       Jeux
                     </Button>
                   </Link>
                   <Link href="/admin/articles">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
                       <NewspaperIcon className="w-4 h-4" />
                       Articles
                     </Button>
                   </Link>
                   <Link href="/admin/guides">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
                       <BookOpenIcon className="w-4 h-4" />
                       Guides
                     </Button>
                   </Link>
                   <Link href="/admin/tags">
-                    <Button variant="ghost" size="sm" className="gap-2">
+                    <Button variant="ghost" size="sm" className="gap-2 cursor-pointer">
                       <span className="w-4 h-4 text-center">#</span>
                       Tags
                     </Button>
@@ -73,25 +73,25 @@ export default function AdminLayout({
 
               <div className="flex items-center gap-2">
                 <Link href="/admin/maintenance">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="cursor-pointer">
                     <Wrench className="w-4 h-4 mr-2" />
                     Maintenance
                   </Button>
                 </Link>
                 <Link href="/admin/debug">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="cursor-pointer">
                     <SettingsIcon className="w-4 h-4 mr-2" />
                     Debug
                   </Button>
                 </Link>
                 <Link href="/admin/preview">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className="cursor-pointer">
                     <Eye className="w-4 h-4 mr-2" />
                     Prévisualiser
                   </Button>
                 </Link>
                 <Link href="/">
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="cursor-pointer">
                     Retour au site
                   </Button>
                 </Link>
@@ -112,7 +112,7 @@ export default function AdminLayout({
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <p>© 2024 GachaActu - Back-Office</p>
               <div className="flex items-center gap-4">
-                <Link href="/admin/settings" className="hover:text-foreground">
+                <Link href="/admin/settings" className="hover:text-foreground cursor-pointer">
                   <SettingsIcon className="w-4 h-4" />
                 </Link>
               </div>

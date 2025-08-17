@@ -8,8 +8,6 @@ import { useState, useEffect, useCallback } from "react"
 interface UseApiDataOptions<T> {
   url: string
   enabled?: boolean
-  transformer?: (data: unknown) => T
-  deps?: unknown[]
 }
 
 interface UseApiDataResult<T> {
@@ -21,8 +19,7 @@ interface UseApiDataResult<T> {
 
 export function useApiData<T>({
   url,
-  enabled = true,
-  transformer
+  enabled = true
 }: UseApiDataOptions<T>): UseApiDataResult<T> {
   const [data, setData] = useState<T | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -40,9 +37,7 @@ export function useApiData<T>({
       }
 
       const rawData = await response.json()
-      const processedData = transformer ? transformer(rawData) : rawData
-      
-      setData(processedData)
+      setData(rawData)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
       setError(errorMessage)
@@ -56,7 +51,7 @@ export function useApiData<T>({
     } finally {
       setIsLoading(false)
     }
-  }, [url, transformer])
+  }, [url])
 
   useEffect(() => {
     if (enabled) {

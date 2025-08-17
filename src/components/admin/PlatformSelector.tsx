@@ -60,8 +60,8 @@ export function PlatformSelector({
     }
   }
 
-  const handleAddPlatform = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleAddPlatform = async (e?: React.FormEvent | React.MouseEvent) => {
+    e?.preventDefault()
     if (!newPlatformName.trim()) return
 
     setIsAdding(true)
@@ -176,7 +176,7 @@ export function PlatformSelector({
             Ajouter une nouvelle plateforme
           </Button>
         ) : (
-          <form onSubmit={handleAddPlatform} className="space-y-3">
+          <div className="space-y-3">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -185,11 +185,18 @@ export function PlatformSelector({
                 placeholder="Nom de la plateforme..."
                 className="flex-1 px-3 py-2 border rounded-md text-sm"
                 disabled={isAdding}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault()
+                    handleAddPlatform(e as any)
+                  }
+                }}
               />
               <Button 
-                type="submit" 
+                type="button" 
                 size="sm" 
                 disabled={isAdding || !newPlatformName.trim()}
+                onClick={handleAddPlatform}
               >
                 {isAdding ? <Loader2 className="w-4 h-4 animate-spin" /> : "Ajouter"}
               </Button>
@@ -206,7 +213,7 @@ export function PlatformSelector({
             >
               Annuler
             </Button>
-          </form>
+          </div>
         )}
       </div>
     </div>
