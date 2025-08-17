@@ -1,9 +1,25 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
 async function main() {
   console.log('🌱 Starting database seed...')
+
+  // 0. Créer l'utilisateur admin
+  console.log('👤 Creating admin user...')
+  const hashedPassword = await bcrypt.hash('password123', 12)
+  const adminUser = await prisma.user.upsert({
+    where: { email: 'admin@test.com' },
+    update: {},
+    create: {
+      email: 'admin@test.com',
+      name: 'Admin Test',
+      password: hashedPassword,
+      role: 'admin',
+      emailVerified: new Date()
+    }
+  })
 
   // 1. Créer les plateformes
   console.log('📝 Creating platforms...')
@@ -336,6 +352,7 @@ async function main() {
 
   console.log('✅ Database seeded successfully!')
   console.log(`📊 Created:`)
+  console.log(`   - 1 admin user (admin@test.com / password123)`)
   console.log(`   - ${platforms.length} platforms`)
   console.log(`   - 6 games with platform associations`)
   console.log(`   - ${tagNames.length} tags`)

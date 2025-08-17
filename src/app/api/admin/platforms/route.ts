@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdminAuth } from '@/lib/auth-middleware'
+import { addSecurityHeaders, sanitize } from '@/lib/security'
 
 export async function GET() {
   try {
@@ -14,7 +16,8 @@ export async function GET() {
       orderBy: { name: 'asc' }
     })
 
-    return NextResponse.json(platforms)
+    const response = NextResponse.json(platforms)
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la récupération des plateformes:', error)
     return NextResponse.json(
@@ -24,9 +27,17 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, _user: unknown) {
   try {
-    const { name, color } = await request.json()
+    const body = await request.json()
+    
+    // Validation et sanitisation
+    const sanitizedData = {
+      name: sanitize.text(body.name || ''),
+      color: body.color ? sanitize.text(body.color) : null
+    }
+    
+    const { name, color } = sanitizedData
     
     if (!name || !name.trim()) {
       return NextResponse.json(
@@ -69,12 +80,17 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json(platform, { status: 201 })
+    const response = NextResponse.json(platform, { status: 201 })
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la création de la plateforme:', error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
     )
+    return addSecurityHeaders(response)
   }
 }
+
+// Protéger la route POST avec authentification admin
+export const POST = requireAdminAuth(handlePOST)

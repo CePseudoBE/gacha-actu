@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const gameId = searchParams.get('gameId')
+  const game = searchParams.get('game') // slug du jeu
   const guideType = searchParams.get('guideType')
   const difficulty = searchParams.get('difficulty')
   const popular = searchParams.get('popular')
@@ -15,8 +15,10 @@ export async function GET(request: Request) {
 
     const where: any = {}
     
-    if (gameId) {
-      where.gameId = gameId
+    if (game) {
+      where.game = {
+        slug: game
+      }
     }
     
     if (guideType) {

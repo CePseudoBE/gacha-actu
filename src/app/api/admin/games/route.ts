@@ -2,24 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateGames } from '@/lib/data-access'
 import { createGameApiSchema } from '@/lib/validations'
+import { requireAdminAuth } from '@/lib/auth-middleware'
+import { validateAndSanitize, addSecurityHeaders } from '@/lib/security'
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, _user: unknown) {
   try {
     const body = await request.json()
     
-    // Validation avec Zod
-    const validationResult = createGameApiSchema.safeParse(body)
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { 
-          error: 'Données invalides', 
-          details: validationResult.error.flatten().fieldErrors 
-        },
-        { status: 400 }
-      )
-    }
-    
-    const validatedData = validationResult.data
+    // Validation et sanitisation sécurisées
+    const validatedData = validateAndSanitize(body, (data) => {
+      const result = createGameApiSchema.safeParse(data)
+      if (!result.success) {
+        throw new Error('Validation failed')
+      }
+      return result.data
+    })
 
     // Vérifier si le slug existe déjà
     const existingGame = await prisma.game.findUnique({
@@ -70,13 +67,15 @@ export async function POST(request: NextRequest) {
     // Revalider le cache
     await revalidateGames()
 
-    return NextResponse.json(game, { status: 201 })
+    const response = NextResponse.json(game, { status: 201 })
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la création du jeu:', error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
     )
+    return addSecurityHeaders(response)
   }
 }
 
@@ -99,12 +98,17 @@ export async function GET() {
       orderBy: { name: 'asc' }
     })
 
-    return NextResponse.json(games)
+    const response = NextResponse.json(games)
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la récupération des jeux:', error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
     )
+    return addSecurityHeaders(response)
   }
 }
+
+// Protéger la route POST avec authentification admin
+export const POST = requireAdminAuth(handlePOST)

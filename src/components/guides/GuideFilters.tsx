@@ -46,20 +46,20 @@ export function GuideFilters() {
   
   const [guideType, setGuideType] = useState(searchParams.get('guideType') || '')
   const [difficulty, setDifficulty] = useState(searchParams.get('difficulty') || '')
-  const [gameId, setGameId] = useState(searchParams.get('gameId') || '')
+  const [game, setGame] = useState(searchParams.get('game') || '')
   const [popular, setPopular] = useState(searchParams.get('popular') === 'true')
 
-  const updateFilters = (newGuideType?: string, newDifficulty?: string, newGameId?: string, newPopular?: boolean) => {
+  const updateFilters = (newGuideType?: string, newDifficulty?: string, newGame?: string, newPopular?: boolean) => {
     const params = new URLSearchParams()
     
     const finalGuideType = newGuideType !== undefined ? newGuideType : guideType
     const finalDifficulty = newDifficulty !== undefined ? newDifficulty : difficulty
-    const finalGameId = newGameId !== undefined ? newGameId : gameId
+    const finalGame = newGame !== undefined ? newGame : game
     const finalPopular = newPopular !== undefined ? newPopular : popular
     
     if (finalGuideType) params.set('guideType', finalGuideType)
     if (finalDifficulty) params.set('difficulty', finalDifficulty)
-    if (finalGameId) params.set('gameId', finalGameId)
+    if (finalGame) params.set('game', finalGame)
     if (finalPopular) params.set('popular', 'true')
     
     const queryString = params.toString()
@@ -69,7 +69,7 @@ export function GuideFilters() {
   const clearFilters = () => {
     setGuideType('')
     setDifficulty('')
-    setGameId('')
+    setGame('')
     setPopular(false)
     router.push('/guides')
   }
@@ -87,9 +87,9 @@ export function GuideFilters() {
   }
 
   const handleGameChange = (value: string) => {
-    const newGameId = value === 'all' ? '' : value
-    setGameId(newGameId)
-    updateFilters(undefined, undefined, newGameId, undefined)
+    const newGame = value === 'all' ? '' : value
+    setGame(newGame)
+    updateFilters(undefined, undefined, newGame, undefined)
   }
 
   const handlePopularToggle = () => {
@@ -98,7 +98,7 @@ export function GuideFilters() {
     updateFilters(undefined, undefined, undefined, newPopular)
   }
 
-  const activeFiltersCount = (guideType ? 1 : 0) + (difficulty ? 1 : 0) + (gameId ? 1 : 0) + (popular ? 1 : 0)
+  const activeFiltersCount = (guideType ? 1 : 0) + (difficulty ? 1 : 0) + (game ? 1 : 0) + (popular ? 1 : 0)
 
   return (
     <div className="bg-card rounded-xl p-6 shadow-sm border">
@@ -131,7 +131,7 @@ export function GuideFilters() {
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Game Filter */}
-          <Select value={gameId || 'all'} onValueChange={handleGameChange}>
+          <Select value={game || 'all'} onValueChange={handleGameChange}>
             <SelectTrigger>
               <SelectValue placeholder="Tous les jeux" />
             </SelectTrigger>
@@ -194,9 +194,9 @@ export function GuideFilters() {
           <div className="flex flex-wrap gap-2 pt-4 border-t">
             <span className="text-sm text-muted-foreground">Filtres actifs:</span>
             
-            {gameId && (
+            {game && (
               <Badge variant="secondary" className="gap-1">
-                {GAMES.find(g => g.value === gameId)?.label || gameId}
+                {GAMES.find(g => g.value === game)?.label || game}
                 <button
                   onClick={() => handleGameChange('all')}
                   className="hover:bg-background/20 rounded-full p-0.5 ml-1"

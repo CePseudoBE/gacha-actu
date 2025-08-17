@@ -158,7 +158,6 @@ model Guide {
   id                String              @id @default(cuid())
   title             String
   summary           String
-  content           String
   author            String
   publishedAt       DateTime
   updatedAt         DateTime            @updatedAt

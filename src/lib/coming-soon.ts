@@ -6,7 +6,6 @@
 const LAUNCH_DATE = new Date('2025-09-15') // Date de lancement - ajustable
 const COMING_SOON_PAGES = [
   '/games',
-  '/guides', 
   '/tier-lists'
 ]
 

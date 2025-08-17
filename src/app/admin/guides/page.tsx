@@ -127,7 +127,7 @@ export default async function AdminGuidesPage() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-2">
-                <Link href={`/guide/${guide.slug}`} className="flex-1">
+                <Link href={`/guides/${guide.slug}`} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full">
                     <Eye className="w-4 h-4 mr-2" />
                     Voir

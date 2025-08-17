@@ -41,6 +41,14 @@ const summarySchema = (minLength: number) =>
 const contentSchema = (minLength: number) =>
   z.string().min(minLength, `Le contenu doit faire au moins ${minLength} caractères`)
 
+// Schéma pour les sections de guide
+const guideSectionSchema = z.object({
+  id: z.string(),
+  title: z.string().min(1, "Le titre de la section est requis"),
+  content: z.string().min(1, "Le contenu de la section est requis"),
+  order: z.number().int().min(0)
+})
+
 // === SCHÉMAS POUR LES FORMULAIRES ===
 
 // Schéma pour les articles
@@ -54,9 +62,9 @@ export const articleFormSchema = baseContentSchema.extend({
 // Schéma pour les guides  
 export const guideFormSchema = baseContentSchema.extend({
   summary: summarySchema(50),
-  content: contentSchema(300),
   difficulty: z.enum(DIFFICULTY_LEVELS),
-  guideType: z.enum(GUIDE_TYPES)
+  guideType: z.enum(GUIDE_TYPES),
+  sections: z.array(guideSectionSchema).min(1, "Le guide doit contenir au moins une section")
 })
 
 // Schéma pour les jeux
@@ -113,10 +121,10 @@ export const createArticleApiSchema = createApiSchema(articleFormSchema).extend(
 
 export const createGuideApiSchema = createApiSchema(guideFormSchema).extend({
   summary: z.string().min(50),
-  content: z.string().min(300),
   difficulty: z.enum(DIFFICULTY_LEVELS).optional(),
   guideType: z.enum(GUIDE_TYPES).optional(),
-  readingTime: z.number().min(1).optional().nullable()
+  readingTime: z.number().min(1).optional().nullable(),
+  sections: z.array(guideSectionSchema).min(1, "Le guide doit contenir au moins une section")
 })
 
 export const createGameApiSchema = gameFormSchema

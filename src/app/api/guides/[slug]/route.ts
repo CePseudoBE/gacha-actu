@@ -68,7 +68,6 @@ export async function GET(request: Request, { params }: RouteParams) {
       id: guide.id,
       title: guide.title,
       summary: guide.summary,
-      content: guide.content,
       author: guide.author,
       publishedAt: guide.publishedAt.toISOString(),
       updatedAt: guide.updatedAt.toISOString(),
@@ -80,10 +79,13 @@ export async function GET(request: Request, { params }: RouteParams) {
       isPopular: guide.isPopular,
       viewCount: guide.viewCount + 1, // Include the incremented view count
       metaDescription: guide.metaDescription,
-      game: guide.game.name,
-      gameSlug: guide.game.slug,
-      gameImageUrl: guide.game.imageUrl,
-      tags: guide.tags.map(t => t.tag.name),
+      game: {
+        id: guide.gameId,
+        name: guide.game.name,
+        slug: guide.game.slug,
+        imageUrl: guide.game.imageUrl
+      },
+      tags: guide.tags.map(t => ({ tag: { name: t.tag.name } })),
       sections: guide.sections.map(section => ({
         id: section.id,
         title: section.title,

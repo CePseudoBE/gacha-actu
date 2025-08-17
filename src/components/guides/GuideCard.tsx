@@ -169,7 +169,7 @@ export function GuideCard({ guide }: GuideCardProps) {
 
       <CardFooter className="pt-0">
         <Button asChild className="w-full">
-          <Link href={`/guide/${guide.slug}`}>
+          <Link href={`/guides/${guide.slug}`}>
             <BookOpen className="w-4 h-4 mr-2" />
             Lire le guide
           </Link>

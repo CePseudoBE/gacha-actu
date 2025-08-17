@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdminAuth } from '@/lib/auth-middleware'
+import { addSecurityHeaders, sanitize } from '@/lib/security'
 
 export async function GET() {
   try {
@@ -17,9 +19,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, _user: unknown) {
   try {
-    const { keyword } = await request.json()
+    const body = await request.json()
+    const keyword = sanitize.text(body.keyword || '')
     
     if (!keyword || !keyword.trim()) {
       return NextResponse.json(
@@ -44,12 +47,16 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json(seoKeyword, { status: 201 })
+    const response = NextResponse.json(seoKeyword, { status: 201 })
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la création du mot-clé SEO:', error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
     )
+    return addSecurityHeaders(response)
   }
 }
+
+export const POST = requireAdminAuth(handlePOST)

@@ -103,10 +103,6 @@ export const requireAdminAuth = (handler: (request: NextRequest, user: SessionUs
       throw new SecurityError('Limite admin dépassée', 'ADMIN_RATE_LIMIT', 429)
     }
 
-    // Log des accès admin (dev uniquement)
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Admin access: ${user.email} - ${request.method} ${request.nextUrl.pathname}`)
-    }
 
     return handler(request, user)
   })

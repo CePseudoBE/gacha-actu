@@ -1,6 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useForm } from "react-hook-form"
@@ -14,6 +13,16 @@ import { Switch } from "@/components/ui/switch"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { ArrowLeft, Save } from "lucide-react"
 import { guideFormSchema, type GuideFormData } from "@/lib/validations"
+import { SectionsEditor, type Section } from "@/components/forms/SectionsEditor"
+
+// Hooks personnalisés
+import { useFormData } from "@/hooks/useFormData"
+import { useAsyncOperation } from "@/hooks/useAsyncOperation"
+
+// Composants réutilisables  
+import { SidebarFields } from "@/components/forms/SidebarFields"
+import { LoadingState } from "@/components/forms/LoadingState"
+import { ErrorState } from "@/components/forms/ErrorState"
 
 const difficulties = [
   { value: "BEGINNER", label: "Débutant" },
@@ -35,7 +44,10 @@ const guideTypes = [
 
 export default function AddGuidePage() {
   const router = useRouter()
-  const [games, setGames] = useState<Array<{id: string, name: string}>>([])
+  
+  // Hooks pour la logique métier
+  const { games, availableTags, availableSeoKeywords, isLoading, error } = useFormData()
+  const { execute: submitGuide, isLoading: isSubmitting, error: submitError } = useAsyncOperation()
 
   // Configuration React Hook Form avec Zod
   const form = useForm<GuideFormData>({
@@ -44,7 +56,6 @@ export default function AddGuidePage() {
       title: "",
       slug: "",
       summary: "",
-      content: "",
       author: "",
       gameId: "",
       difficulty: "BEGINNER",
@@ -54,48 +65,38 @@ export default function AddGuidePage() {
       metaDescription: "",
       isPopular: false,
       tags: [],
-      seoKeywords: []
+      seoKeywords: [],
+      sections: []
     }
   })
 
-  // Charger les jeux
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response = await fetch('/api/admin/games')
-        if (response.ok) {
-          const data = await response.json()
-          setGames(data)
-        }
-      } catch (error) {
-        console.error('Erreur lors du chargement des jeux:', error)
-      }
-    }
-    fetchGames()
-  }, [])
 
-  // Soumission du formulaire
+  // Gestion de la soumission
   const onSubmit = async (data: GuideFormData) => {
-    try {
+    const result = await submitGuide(async () => {
+      const transformedData = {
+        ...data,
+        readingTime: data.readingTime || null
+      }
+      
       const response = await fetch('/api/admin/guides', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...data,
-          readingTime: data.readingTime || null
-        }),
+        body: JSON.stringify(transformedData),
       })
 
-      if (response.ok) {
-        router.push('/admin/guides')
-      } else {
+      if (!response.ok) {
         const errorData = await response.json()
-        console.error('Erreur lors de la création du guide:', errorData.error)
+        throw new Error(errorData.error || 'Erreur lors de la création du guide')
       }
-    } catch (error) {
-      console.error('Erreur:', error)
+
+      return response.json()
+    })
+
+    if (result) {
+      router.push('/admin/guides')
     }
   }
 
@@ -116,7 +117,15 @@ export default function AddGuidePage() {
 
   const { watch } = form
   const watchedSummary = watch("summary")
-  const watchedContent = watch("content")
+
+  // États de chargement et d'erreur
+  if (isLoading) {
+    return <LoadingState title="Chargement du formulaire" description="Chargement des données nécessaires..." />
+  }
+
+  if (error) {
+    return <ErrorState error={error} onRetry={() => window.location.reload()} />
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -133,18 +142,18 @@ export default function AddGuidePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Formulaire principal */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Contenu du guide</CardTitle>
-            <CardDescription>
-              Informations principales et contenu
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Formulaire principal */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Contenu du guide</CardTitle>
+                <CardDescription>
+                  Informations principales et contenu
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
                 {/* Titre */}
                 <FormField
                   control={form.control}
@@ -204,30 +213,21 @@ export default function AddGuidePage() {
                   )}
                 />
 
-                {/* Contenu */}
-                <FormField
-                  control={form.control}
-                  name="content"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contenu du guide *</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Contenu complet du guide en Markdown..."
-                          rows={12}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription className={watchedContent.length >= 300 ? 'text-green-600' : ''}>
-                        {watchedContent.length}/300 caractères minimum {watchedContent.length >= 300 && '✓'}
-                      </FormDescription>
-                      <FormDescription>
-                        Vous pouvez utiliser le format Markdown pour la mise en forme
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* Sections du guide */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-lg font-semibold">Structure du guide</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Organisez votre guide en sections pour une meilleure lisibilité
+                    </p>
+                  </div>
+                  
+                  <SectionsEditor
+                    sections={form.watch("sections") || []}
+                    onChange={(sections) => form.setValue("sections", sections)}
+                    disabled={form.formState.isSubmitting}
+                  />
+                </div>
 
                 {/* Description SEO */}
                 <FormField
@@ -251,35 +251,18 @@ export default function AddGuidePage() {
                   )}
                 />
 
-                <div className="flex gap-4 pt-6">
-                  <Button 
-                    type="submit" 
-                    disabled={form.formState.isSubmitting} 
-                    className="flex-1"
-                  >
-                    <Save className="w-4 h-4 mr-2" />
-                    {form.formState.isSubmitting ? "Création..." : "Créer le guide"}
-                  </Button>
-                  <Link href="/admin/guides">
-                    <Button type="button" variant="outline">
-                      Annuler
-                    </Button>
-                  </Link>
-                </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Sidebar métadonnées */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Métadonnées</CardTitle>
-            <CardDescription>
-              Informations complémentaires
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+            {/* Sidebar métadonnées */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Métadonnées</CardTitle>
+                <CardDescription>
+                  Informations complémentaires
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
             {/* Auteur */}
             <FormField
               control={form.control}
@@ -435,9 +418,28 @@ export default function AddGuidePage() {
                 </FormItem>
               )}
             />
-          </CardContent>
-        </Card>
-      </div>
+
+
+                <div className="flex gap-4 pt-6">
+                  <Button 
+                    type="submit" 
+                    disabled={form.formState.isSubmitting} 
+                    className="flex-1"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {form.formState.isSubmitting ? "Création..." : "Créer le guide"}
+                  </Button>
+                  <Link href="/admin/guides">
+                    <Button type="button" variant="outline">
+                      Annuler
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </form>
+      </Form>
     </div>
   )
 }

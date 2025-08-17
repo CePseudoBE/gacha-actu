@@ -31,7 +31,12 @@ const jsonLd = {
   }
 }
 
-export default function GuidesPage() {
+export default async function GuidesPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }> 
+}) {
+  const resolvedSearchParams = await searchParams
   return (
     <>
       <JsonLdScript data={jsonLd} />

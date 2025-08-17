@@ -104,13 +104,6 @@ const authOptions = {
         session.user.isActive = token.isActive as boolean
       }
       
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Session callback:', { 
-          userId: session.user?.id, 
-          role: session.user?.role, 
-          isActive: session.user?.isActive 
-        })
-      }
       
       return session
     },
@@ -145,18 +138,6 @@ const authOptions = {
     }
   },
 
-  // Configuration des événements (logging)
-  events: {
-    async signIn({ user }: { user: any; account?: any; profile?: any; isNewUser?: boolean }) {
-      console.log(`Connexion réussie: ${user.email} (${user.role})`)
-    },
-    async signOut({ session }: { session?: any; token?: any }) {
-      console.log(`Déconnexion: ${session?.user?.email}`)
-    },
-    async createUser({ user }: { user: any }) {
-      console.log(`Nouvel utilisateur créé: ${user.email}`)
-    }
-  },
 
   // Debug en développement
   debug: process.env.NODE_ENV === 'development',

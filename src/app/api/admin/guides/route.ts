@@ -2,24 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateAll } from '@/lib/data-access'
 import { createGuideApiSchema } from '@/lib/validations'
+import { requireAdminAuth } from '@/lib/auth-middleware'
+import { validateAndSanitize, addSecurityHeaders } from '@/lib/security'
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, _user: unknown) {
   try {
     const body = await request.json()
     
-    // Validation avec Zod
-    const validationResult = createGuideApiSchema.safeParse(body)
-    if (!validationResult.success) {
-      return NextResponse.json(
-        { 
-          error: 'Données invalides', 
-          details: validationResult.error.flatten().fieldErrors 
-        },
-        { status: 400 }
-      )
-    }
-    
-    const validatedData = validationResult.data
+    // Validation et sanitisation sécurisées
+    const validatedData = validateAndSanitize(body, (data) => {
+      const result = createGuideApiSchema.safeParse(data)
+      if (!result.success) {
+        throw new Error('Validation failed')
+      }
+      return result.data
+    })
 
     // Vérifier si le slug existe déjà
     const existingGuide = await prisma.guide.findUnique({
@@ -33,13 +30,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Créer le guide
+    // Créer le guide avec les sections
     const guide = await prisma.guide.create({
       data: {
         title: validatedData.title,
         slug: validatedData.slug,
         summary: validatedData.summary,
-        content: validatedData.content,
         author: validatedData.author,
         gameId: validatedData.gameId,
         guideType: validatedData.guideType || 'STRATEGY',
@@ -49,11 +45,24 @@ export async function POST(request: NextRequest) {
         metaDescription: validatedData.metaDescription || null,
         isPopular: validatedData.isPopular || false,
         publishedAt: new Date(),
+        // Créer les sections (obligatoires maintenant)
+        sections: {
+          create: validatedData.sections.map((section, index) => ({
+            title: section.title,
+            content: section.content,
+            order: index
+          }))
+        }
       },
       include: {
         game: {
           select: {
             name: true
+          }
+        },
+        sections: {
+          orderBy: {
+            order: 'asc'
           }
         }
       }
@@ -62,7 +71,8 @@ export async function POST(request: NextRequest) {
     // Revalider le cache
     await revalidateAll()
 
-    return NextResponse.json(guide, { status: 201 })
+    const response = NextResponse.json(guide, { status: 201 })
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la création du guide:', error)
     return NextResponse.json(
@@ -95,12 +105,17 @@ export async function GET() {
       orderBy: { createdAt: 'desc' }
     })
 
-    return NextResponse.json(guides)
+    const response = NextResponse.json(guides)
+    return addSecurityHeaders(response)
   } catch (error) {
     console.error('Erreur lors de la récupération des guides:', error)
-    return NextResponse.json(
+    const response = NextResponse.json(
       { error: 'Erreur interne du serveur' },
       { status: 500 }
     )
+    return addSecurityHeaders(response)
   }
 }
+
+// Protéger la route POST avec authentification admin
+export const POST = requireAdminAuth(handlePOST)

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateGames } from '@/lib/data-access'
+import { requireAdminAuth } from '@/lib/auth-middleware'
+import { validateAndSanitize, addSecurityHeaders, sanitize } from '@/lib/security'
 
 export async function GET(
   request: NextRequest,
@@ -37,16 +39,30 @@ export async function GET(
   }
 }
 
-export async function PUT(
+async function handlePUT(
   request: NextRequest,
+  _user: unknown,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params
     const body = await request.json()
     
+    // Sanitisation sécurisée
+    const sanitizedData = {
+      name: sanitize.text(body.name || ''),
+      slug: sanitize.slug(body.slug || ''),
+      description: body.description ? sanitize.text(body.description) : null,
+      imageUrl: body.imageUrl ? sanitize.url(body.imageUrl) : null,
+      developer: body.developer ? sanitize.text(body.developer) : null,
+      publisher: body.publisher ? sanitize.text(body.publisher) : null,
+      releaseDate: body.releaseDate || null,
+      isActive: Boolean(body.isActive),
+      platforms: body.platforms || []
+    }
+
     // Validation des données requises
-    if (!body.name || !body.slug) {
+    if (!sanitizedData.name || !sanitizedData.slug) {
       return NextResponse.json(
         { error: 'Le nom et le slug sont requis' },
         { status: 400 }
@@ -56,7 +72,7 @@ export async function PUT(
     // Vérifier si le slug existe déjà pour un autre jeu
     const existingGame = await prisma.game.findFirst({
       where: { 
-        slug: body.slug,
+        slug: sanitizedData.slug,
         NOT: { id }
       }
     })
@@ -74,17 +90,17 @@ export async function PUT(
       const updatedGame = await tx.game.update({
         where: { id },
         data: {
-          name: body.name,
-          slug: body.slug,
-          description: body.description || null,
-          genre: body.genre || null,
-          developer: body.developer || null,
-          releaseDate: body.releaseDate || null,
-          imageUrl: body.imageUrl || null,
-          logoUrl: body.logoUrl || null,
-          officialSite: body.officialSite || null,
-          wiki: body.wiki || null,
-          isPopular: body.isPopular || false,
+          name: sanitizedData.name,
+          slug: sanitizedData.slug,
+          description: sanitizedData.description,
+          genre: body.genre ? sanitize.text(body.genre) : null,
+          developer: sanitizedData.developer,
+          releaseDate: sanitizedData.releaseDate,
+          imageUrl: sanitizedData.imageUrl,
+          logoUrl: body.logoUrl ? sanitize.url(body.logoUrl) : null,
+          officialSite: body.officialSite ? sanitize.url(body.officialSite) : null,
+          wiki: body.wiki ? sanitize.url(body.wiki) : null,
+          isPopular: Boolean(body.isPopular),
         }
       })
 
@@ -173,4 +189,14 @@ export async function DELETE(
       { status: 500 }
     )
   }
+}
+
+// Exports sécurisés  
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  return requireAdminAuth(async (req, user) => {
+    return handlePUT(req, user, { params })
+  })(request)
 }

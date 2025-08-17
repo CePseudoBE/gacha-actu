@@ -46,7 +46,7 @@ export function GuideGrid() {
   const [loadingMore, setLoadingMore] = useState(false)
   
   const searchParams = useSearchParams()
-  const gameId = searchParams.get('gameId')
+  const game = searchParams.get('game') // slug du jeu
   const guideType = searchParams.get('guideType')
   const difficulty = searchParams.get('difficulty')
   const popular = searchParams.get('popular')
@@ -61,7 +61,7 @@ export function GuideGrid() {
         limit: '12'
       })
 
-      if (gameId) params.set('gameId', gameId)
+      if (game) params.set('game', game)
       if (guideType) params.set('guideType', guideType)
       if (difficulty) params.set('difficulty', difficulty)
       if (popular) params.set('popular', popular)
@@ -89,7 +89,7 @@ export function GuideGrid() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [gameId, guideType, difficulty, popular])
+  }, [game, guideType, difficulty, popular])
 
   // Recharger lors des changements de filtres
   useEffect(() => {

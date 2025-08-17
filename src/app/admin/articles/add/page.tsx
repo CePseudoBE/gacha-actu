@@ -17,7 +17,8 @@ import { useAsyncOperation } from "@/hooks/useAsyncOperation"
 // Composants réutilisables
 import { TitleSlugFields } from "@/components/forms/TitleSlugFields"
 import { ContentFields } from "@/components/forms/ContentFields"
-import { MetadataFields } from "@/components/forms/MetadataFields"
+import { MainContentFields } from "@/components/forms/MainContentFields"
+import { SidebarFields } from "@/components/forms/SidebarFields"
 import { FormActions } from "@/components/forms/FormActions"
 import { LoadingState } from "@/components/forms/LoadingState"
 import { ErrorState } from "@/components/forms/ErrorState"
@@ -133,35 +134,52 @@ export default function AddArticlePage() {
 
                 <Separator />
 
-                <MetadataFields
+                <MainContentFields
                   control={form.control}
                   games={games}
                   availableTags={availableTags}
-                  availableSeoKeywords={availableSeoKeywords}
                   showCategory={true}
-                  showPublishedAt={true}
                   categories={categories}
                 />
               </CardContent>
             </Card>
 
-            {/* Sidebar des actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Publication</CardTitle>
-                <CardDescription>
-                  Actions et paramètres
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormActions
-                  isSubmitting={isSubmitting}
-                  submitText="Créer l&apos;article"
-                  cancelPath="/admin/articles"
-                  error={submitError}
-                />
-              </CardContent>
-            </Card>
+            {/* Sidebar des métadonnées et actions */}
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Métadonnées</CardTitle>
+                  <CardDescription>
+                    Informations de l&apos;article
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <SidebarFields
+                    control={form.control}
+                    availableTags={availableTags}
+                    availableSeoKeywords={availableSeoKeywords}
+                    showPublishedAt={true}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Publication</CardTitle>
+                  <CardDescription>
+                    Actions et paramètres
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <FormActions
+                    isSubmitting={isSubmitting}
+                    submitText="Créer l&apos;article"
+                    cancelPath="/admin/articles"
+                    error={submitError}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </form>
       </Form>
