@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sanitize } from './sanitizers'
+import { sanitize } from './sanitizers/index'
 
 // Interface pour les réponses d'erreur sécurisées
 interface SecureErrorResponse {
@@ -22,7 +22,7 @@ export class SecurityError extends Error {
 }
 
 // Réexport des sanitizers pour compatibilité
-export { sanitize, SanitizerFactory } from './sanitizers'
+export { sanitize, SanitizerFactory } from './sanitizers/index'
 
 // Validation des taux de limitation (Rate Limiting)
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>()

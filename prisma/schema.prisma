@@ -85,6 +85,7 @@ model Game {
   guides       Guide[]
   tags         GameTag[]
   platforms    GamePlatform[]
+  youtubeVideos YouTubeVideo[]
 
   @@index([isPopular])
   @@index([genre])
@@ -260,6 +261,36 @@ model GamePlatform {
   @@index([gameId])
   @@index([platformId])
   @@map("game_platforms")
+}
+
+// === MODÈLE YOUTUBE ===
+
+model YouTubeVideo {
+  id          String   @id @default(cuid())
+  videoId     String   @unique // L'ID YouTube de la vidéo (ex: dQw4w9WgXcQ)
+  title       String
+  description String?
+  thumbnail   String?
+  channelTitle String?
+  publishedAt DateTime?
+  category    String?
+  duration    String?  // Durée de la vidéo (ex: "PT4M33S")
+  viewCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  order       Int      @default(0) // Ordre d'affichage dans le carousel
+  gameId      String?  // Lien optionnel avec un jeu
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  game        Game?    @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  @@index([isActive])
+  @@index([order])
+  @@index([publishedAt])
+  @@index([gameId])
+  @@index([category])
+  @@map("youtube_videos")
 }
 
 // === MODÈLES NEXTAUTH ===
