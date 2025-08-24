@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for Docker
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -74,6 +76,13 @@ const nextConfig: NextConfig = {
   },
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  // Forcer le rendu dynamique pour les pages admin qui nécessitent la base de données
+  async rewrites() {
+    return []
+  },
+  async generateBuildId() {
+    return 'build-' + Date.now()
   },
 };
 

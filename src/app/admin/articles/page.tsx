@@ -7,6 +7,36 @@ import { Search, Plus, Edit, Trash2, Eye } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
+type ArticleWithRelations = {
+  id: string
+  title: string
+  slug: string
+  summary: string
+  author: string
+  publishedAt: Date
+  imageUrl: string | null
+  content: string
+  metaDescription: string | null
+  readingTime: number | null
+  category: string | null
+  isPopular: boolean
+  createdAt: Date
+  updatedAt: Date
+  gameId: string
+  game: {
+    name: string
+    imageUrl: string | null
+  }
+  tags: {
+    tag: {
+      name: string
+    }
+  }[]
+}
+
 export default async function AdminArticlesPage() {
   const articles = await prisma.article.findMany({
     include: {
@@ -90,7 +120,7 @@ export default async function AdminArticlesPage() {
 
       {/* Liste des articles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {articles.map((article) => (
+        {articles.map((article: ArticleWithRelations) => (
           <Card key={article.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-4">
               <div className="flex items-start gap-3">

@@ -6,6 +6,20 @@ import { Input } from "@/components/ui/input"
 import { Search, Edit, Trash2 } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
+type TagWithCounts = {
+  id: string
+  name: string
+  slug: string
+  createdAt: Date
+  _count: {
+    articles: number
+    guides: number
+  }
+}
+
 export default async function AdminTagsPage() {
   const tags = await prisma.tag.findMany({
     include: {
@@ -46,7 +60,7 @@ export default async function AdminTagsPage() {
 
       {/* Liste des tags */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {tags.map((tag) => (
+        {tags.map((tag: TagWithCounts) => (
           <Card key={tag.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-base">{tag.name}</CardTitle>
@@ -119,13 +133,13 @@ export default async function AdminTagsPage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold">
-                    {tags.filter(tag => tag._count.articles > 0 || tag._count.guides > 0).length}
+                    {tags.filter((tag: TagWithCounts) => tag._count.articles > 0 || tag._count.guides > 0).length}
                   </div>
                   <p className="text-sm text-muted-foreground">Tags utilisés</p>
                 </div>
                 <div>
                   <div className="text-2xl font-bold">
-                    {tags.reduce((acc, tag) => acc + tag._count.articles + tag._count.guides, 0)}
+                    {tags.reduce((acc: number, tag: TagWithCounts) => acc + tag._count.articles + tag._count.guides, 0)}
                   </div>
                   <p className="text-sm text-muted-foreground">Utilisations totales</p>
                 </div>

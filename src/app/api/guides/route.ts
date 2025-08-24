@@ -70,7 +70,7 @@ export async function GET(request: Request) {
       prisma.guide.count({ where })
     ])
 
-    const formattedGuides = guides.map(guide => ({
+    const formattedGuides = guides.map((guide: any) => ({
       id: guide.id,
       title: guide.title,
       summary: guide.summary,
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
       viewCount: guide.viewCount,
       game: guide.game.name,
       gameSlug: guide.game.slug,
-      tags: guide.tags.map(t => t.tag.name),
+      tags: guide.tags.map((t: any) => t.tag.name),
       sectionsCount: guide._count.sections,
     }))
 

@@ -3,6 +3,9 @@ import { TrendingUp, Calendar } from "lucide-react"
 import { ArticlesFilter } from "@/components/ArticlesFilter"
 import { getAllArticles, getAllGames } from "@/lib/data-access"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Actualités - Toutes les news des jeux Gacha",
   description: "Découvrez toutes les actualités, mises à jour et événements des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et bien plus !",

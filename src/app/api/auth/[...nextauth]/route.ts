@@ -123,21 +123,21 @@ const authOptions = {
     error: '/auth/error'
   },
 
-  // Configuration des cookies
+  // Configuration des cookies (sans __Secure- prefix pour HTTP prod)
   cookies: {
     sessionToken: {
-      name: process.env.NODE_ENV === 'production' 
-        ? `__Secure-next-auth.session-token`
-        : `next-auth.session-token`,
+      name: `next-auth.session-token`, // Pas de __Secure- prefix car pas de HTTPS
       options: {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: process.env.NODE_ENV === 'production'
+        secure: false // Forcé à false car prod HTTP sans HTTPS
       }
     }
   },
 
+  // Faire confiance au header Host (requis pour prod)
+  trustHost: true,
 
   // Debug en développement
   debug: process.env.NODE_ENV === 'development',

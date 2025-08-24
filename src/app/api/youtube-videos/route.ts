@@ -25,7 +25,7 @@ export async function GET() {
     })
 
     // Formatter les données pour le frontend
-    const formattedVideos = videos.map(video => ({
+    const formattedVideos = videos.map((video: any) => ({
       id: video.id,
       videoId: video.videoId,
       title: video.title,

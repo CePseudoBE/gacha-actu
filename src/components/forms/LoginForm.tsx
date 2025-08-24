@@ -100,12 +100,6 @@ export function LoginForm() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            <p>Compte de test :</p>
-            <p className="font-mono text-xs mt-1">
-              admin@test.com / password123
-            </p>
-          </div>
         </CardContent>
       </Card>
     </div>

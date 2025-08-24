@@ -31,7 +31,7 @@ async function handlePOST(request: NextRequest, _user: unknown) {
     }
 
     // Créer le jeu avec les plateformes
-    const game = await prisma.$transaction(async (tx) => {
+    const game = await prisma.$transaction(async (tx: any) => {
       // Créer le jeu
       const createdGame = await tx.game.create({
         data: {

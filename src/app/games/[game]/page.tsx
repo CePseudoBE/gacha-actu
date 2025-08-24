@@ -74,7 +74,7 @@ export default async function GamePage({ params }: GamePageProps) {
     "name": gameData.name,
     "description": gameData.description,
     "genre": gameData.genre,
-    "gamePlatform": gameData.platforms?.map(p => p.name).join(", ") || "",
+    "gamePlatform": gameData.platforms?.map((p: any) => p.name).join(", ") || "",
     "publisher": {
       "@type": "Organization",
       "name": gameData.developer
@@ -105,13 +105,16 @@ export default async function GamePage({ params }: GamePageProps) {
 
 // Générer les pages statiques pour tous les jeux en base
 export async function generateStaticParams() {
-  const { prisma } = await import('@/lib/prisma')
+  // Temporairement désactivé pour permettre le build sans accès à la base de données
+  // Les pages seront générées dynamiquement à la demande
+  return []
   
-  const games = await prisma.game.findMany({
-    select: { slug: true }
-  })
-  
-  return games.map((game) => ({
-    game: game.slug,
-  }))
+  // Code original commenté pour référence :
+  // const { prisma } = await import('@/lib/prisma')
+  // const games = await prisma.game.findMany({
+  //   select: { slug: true }
+  // })
+  // return games.map((game: any) => ({
+  //   game: game.slug,
+  // }))
 }

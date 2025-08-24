@@ -86,7 +86,7 @@ export async function PUT(
     }
 
     // Mettre à jour l'article avec transaction pour gérer les tags et keywords
-    const article = await prisma.$transaction(async (tx) => {
+    const article = await prisma.$transaction(async (tx: any) => {
       // Supprimer les anciennes relations tags et keywords
       await tx.articleTag.deleteMany({
         where: { articleId: id }
@@ -189,7 +189,7 @@ export async function DELETE(
   try {
     const { id } = await params
     // Supprimer l'article et ses relations
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
       // Supprimer les relations
       await tx.articleTag.deleteMany({
         where: { articleId: id }

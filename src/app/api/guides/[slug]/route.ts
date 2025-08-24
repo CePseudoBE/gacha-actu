@@ -85,15 +85,15 @@ export async function GET(request: Request, { params }: RouteParams) {
         slug: guide.game.slug,
         imageUrl: guide.game.imageUrl
       },
-      tags: guide.tags.map(t => ({ tag: { name: t.tag.name } })),
-      sections: guide.sections.map(section => ({
+      tags: guide.tags.map((t: any) => ({ tag: { name: t.tag.name } })),
+      sections: guide.sections.map((section: any) => ({
         id: section.id,
         title: section.title,
         content: section.content,
         order: section.order,
       })),
-      prerequisites: guide.prerequisites.map(req => req.description),
-      seoKeywords: guide.seoKeywords.map(k => k.keyword.keyword),
+      prerequisites: guide.prerequisites.map((req: any) => req.description),
+      seoKeywords: guide.seoKeywords.map((k: any) => k.keyword.keyword),
     }
 
     return NextResponse.json({ guide: formattedGuide })

@@ -52,7 +52,7 @@ export async function GET(request: Request) {
       prisma.game.count({ where })
     ])
 
-    const formattedGames = games.map(game => ({
+    const formattedGames = games.map((game: any) => ({
       id: game.id,
       name: game.name,
       slug: game.slug,
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       wiki: game.wiki,
       articlesCount: game._count.articles,
       guidesCount: game._count.guides,
-      tags: game.tags.map(t => t.tag.name),
+      tags: game.tags.map((t: any) => t.tag.name),
     }))
 
     return NextResponse.json({

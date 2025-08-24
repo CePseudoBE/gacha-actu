@@ -63,7 +63,7 @@ async function handlePOST(request: NextRequest, _user: unknown) {
     }
 
     // Créer l'article avec transaction sécurisée
-    const article = await prisma.$transaction(async (tx) => {
+    const article = await prisma.$transaction(async (tx: any) => {
       const createdArticle = await tx.article.create({
         data: {
           title: sanitizedData.title,

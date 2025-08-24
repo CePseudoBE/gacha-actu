@@ -8,6 +8,34 @@ import { prisma } from "@/lib/prisma"
 import Image from "next/image"
 import { DeleteGameButton } from "@/components/admin/DeleteGameButton"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
+type GameWithCounts = {
+  id: string
+  name: string
+  slug: string
+  description: string | null
+  genre: string | null
+  developer: string | null
+  releaseDate: string | null
+  imageUrl: string | null
+  logoUrl: string | null
+  isPopular: boolean
+  createdAt: Date
+  updatedAt: Date
+  _count: {
+    articles: number
+    guides: number
+  }
+  platforms: {
+    platform: {
+      id: string
+      name: string
+    }
+  }[]
+}
+
 export default async function AdminGamesPage() {
   const games = await prisma.game.findMany({
     include: {
@@ -59,7 +87,7 @@ export default async function AdminGamesPage() {
 
       {/* Liste des jeux */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {games.map((game) => (
+        {games.map((game: GameWithCounts) => (
           <Card key={game.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start">

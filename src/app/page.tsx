@@ -8,6 +8,9 @@ import { getPopularArticles } from "@/lib/data-access"
 // import { getRecentVideos } from "@/lib/youtube-data"
 import { homePageSeo } from "@/config/seo"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: "Accueil - Actualités et guides des jeux Gacha",
   description: "Découvrez les dernières actualités, guides experts et tier lists des meilleurs jeux Gacha : Genshin Impact, Honkai Star Rail, Fire Emblem Heroes et plus encore !",

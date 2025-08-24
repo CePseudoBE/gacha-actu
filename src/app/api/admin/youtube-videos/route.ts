@@ -36,7 +36,7 @@ async function handlePOST(request: NextRequest, _user: unknown) {
     const result = createYouTubeVideoSchema.safeParse(body)
     if (!result.success) {
       console.error('Validation errors:', result.error)
-      const errors = result.error?.errors?.map(err => `${err.path.join('.')}: ${err.message}`).join(', ') || 'Erreurs de validation inconnues'
+      const errors = result.error?.issues?.map(err => `${err.path.join('.')}: ${err.message}`).join(', ') || 'Erreurs de validation inconnues'
       const response = NextResponse.json(
         { success: false, error: `Erreurs de validation: ${errors}` },
         { status: 400 }

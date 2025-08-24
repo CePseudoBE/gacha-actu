@@ -4,6 +4,53 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Database } from "lucide-react"
 import { prisma } from "@/lib/prisma"
+import { Prisma } from "@prisma/client"
+
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
+type GameWithInfo = Prisma.GameGetPayload<{
+  select: {
+    id: true
+    name: true
+    slug: true
+    genre: true
+    developer: true
+    isPopular: true
+    createdAt: true
+  }
+}>
+
+type ArticleWithGame = Prisma.ArticleGetPayload<{
+  include: {
+    game: {
+      select: {
+        name: true
+      }
+    }
+  }
+}>
+
+type GuideWithGame = Prisma.GuideGetPayload<{
+  include: {
+    game: {
+      select: {
+        name: true
+      }
+    }
+  }
+}>
+
+type TagWithCount = Prisma.TagGetPayload<{
+  include: {
+    _count: {
+      select: {
+        articles: true
+        guides: true
+      }
+    }
+  }
+}>
 
 export default async function DebugPage() {
   // Récupérer tous les données de la base
@@ -74,7 +121,7 @@ export default async function DebugPage() {
           <CardContent>
             {games.length > 0 ? (
               <div className="space-y-4">
-                {games.map((game) => (
+                {games.map((game: GameWithInfo) => (
                   <div key={game.id} className="p-3 border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold">{game.name}</h3>
@@ -105,7 +152,7 @@ export default async function DebugPage() {
           <CardContent>
             {articles.length > 0 ? (
               <div className="space-y-4">
-                {articles.map((article) => (
+                {articles.map((article: ArticleWithGame) => (
                   <div key={article.id} className="p-3 border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold line-clamp-1">{article.title}</h3>
@@ -136,7 +183,7 @@ export default async function DebugPage() {
           <CardContent>
             {guides.length > 0 ? (
               <div className="space-y-4">
-                {guides.map((guide) => (
+                {guides.map((guide: GuideWithGame) => (
                   <div key={guide.id} className="p-3 border rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="font-semibold line-clamp-1">{guide.title}</h3>
@@ -172,7 +219,7 @@ export default async function DebugPage() {
           <CardContent>
             {tags.length > 0 ? (
               <div className="space-y-2">
-                {tags.map((tag) => (
+                {tags.map((tag: TagWithCount) => (
                   <div key={tag.id} className="flex items-center justify-between p-2 bg-muted/50 rounded-md">
                     <div>
                       <span className="font-medium">{tag.name}</span>

@@ -85,7 +85,7 @@ async function handlePUT(
     }
 
     // Mettre à jour le jeu avec les plateformes
-    const game = await prisma.$transaction(async (tx) => {
+    const game = await prisma.$transaction(async (tx: any) => {
       // Mettre à jour le jeu
       const updatedGame = await tx.game.update({
         where: { id },

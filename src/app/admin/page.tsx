@@ -4,6 +4,19 @@ import { Button } from "@/components/ui/button"
 import { GamepadIcon, BookOpenIcon, NewspaperIcon, BarChart3Icon, TrendingUpIcon } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
+// Force cette page à être rendue dynamiquement (pas de génération statique)
+export const dynamic = 'force-dynamic'
+
+type RecentActivityItem = {
+  id: string
+  title: string
+  author: string
+  createdAt: Date
+  game: {
+    name: string
+  }
+}
+
 export default async function AdminDashboard() {
   // Récupérer les statistiques
   const [
@@ -195,7 +208,7 @@ export default async function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentActivity.length > 0 ? (
-                recentActivity.map((item) => (
+                recentActivity.map((item: RecentActivityItem) => (
                   <div key={item.id} className="flex flex-col space-y-1">
                     <p className="text-sm font-medium line-clamp-2">{item.title}</p>
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
